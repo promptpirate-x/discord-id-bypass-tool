@@ -15,6 +15,7 @@
   <img src="https://img.shields.io/badge/FBX-supported-purple" />
   <img src="https://img.shields.io/badge/GLB-supported-blue" />
   <img src="https://img.shields.io/badge/license-MIT-green" />
+  <img src="https://komarev.com/ghpvc/?username=promptpirate-x&repo=discord-id-bypass-tool&color=blue&style=for-the-badge" />
 </p>
 
 ---
@@ -97,4 +98,3 @@ MIT — do whatever you want with it.
 <p align="center">
   <sub>☠ Made with love by <a href="https://github.com/PromptPirate">PromptPirate</a></sub>
 </p>
-![Views](https://komarev.com/ghpvc/?username=promptpirate-x&repo=discord-id-bypass-tool&color=4A412A)
