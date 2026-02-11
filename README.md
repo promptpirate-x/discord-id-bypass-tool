@@ -20,7 +20,7 @@
 
 ---
 # UPDATE
-Discord "may" be adding blink tests now, so let me now if they are and ill map that with an update
+Discord "may" be adding blink tests now, so let me now if they are and ill map that with an update. Either way, Discord is rooted in the short/long term, time to bail. This will help anons who've been locked out if they need to find out where the server they were in is migrating too
 
 ## What is this?
 
