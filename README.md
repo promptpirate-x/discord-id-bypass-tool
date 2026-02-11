@@ -34,7 +34,7 @@ https://github.com/user-attachments/assets/4aba4a67-9847-4d28-9c8c-4129a67e9332
 - **Automatic bone detection** — finds Head, Neck, Jaw bones by name or VRM humanoid API
 - **Morph target tester** — preview every blend shape with sliders, map the right mouth shape to your controller
 - **Mouth overdrive** — push morph targets beyond 100% for exaggerated expressions
-- **Gamepad + keyboard** — left stick / arrows for head, RT / Space for mouth
+- **Gamepad + keyboard** — left stick / WASD for head, RT / Space for mouth
 - **Orbit camera** — right-click drag to orbit, scroll to zoom, quick-focus buttons
 - **Zero install** — single HTML file, runs in any modern browser
 
@@ -54,8 +54,8 @@ You have to click eyeleft mouthopen for some reason first, then go to Wolfhead3D
 
 | Action | Keyboard | Gamepad |
 |--------|----------|---------|
-| Head Yaw | ← → | L-Stick X |
-| Head Pitch | ↑ ↓ | L-Stick Y |
+| Head Yaw | A D | L-Stick X |
+| Head Pitch | W S | L-Stick Y |
 | Head Roll | Q / E | R-Stick X |
 | Mouth Open | Space | RT |
 | Reset | R | Y Button |
