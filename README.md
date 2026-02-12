@@ -20,7 +20,7 @@
 
 ---
 # UPDATE
-Discord "may" be adding blink tests now, so let me now if they are and ill map that with an update. Either way, Discord is rooted in the short/long term, time to bail. This will help anons who've been locked out if they need to find out where the server they were in is migrating to. Message me on X or Discord (womp) if they add in new requirements for the selfie-check, as I'll have no idea otherwise. If you find a better looking free model thats fully rigged, let me know and I'll update the repo
+Discord "may" be adding blink tests now, so let me know if they are and ill map that with an update. Either way, Discord is rooted in the short/long term, time to bail. This will help anons who've been locked out if they need to find out where the server they were in is migrating to. Message me on X or Discord (womp) if they add in new requirements for the selfie-check, as I'll have no idea otherwise. If you find a better looking free model thats fully rigged, let me know and I'll update the repo
 
 ## What is this?
 
