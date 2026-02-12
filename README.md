@@ -21,12 +21,11 @@
 ---
 # UPDATE 1
 https://age-verifier.kibty.town/
-These anons have a script you can use in the console editor to get a 100% pass rate, and if you're willing to fuck around in the console I honestly reccomend doing things this way atm. Out of several thousand people having no problem my tool and with the model I included, I have seen some people getting picked up as kids with that same model, which I only picked becuase it worked for me and my mates and was only a few mb. My tool with some extra features and an older model (when I find a good one) will still be good for all selfie verifier tests in a few days instead of just Discord, but if the console script above works 100% of the time, consider using it just in case. 
+These anons have a script you can use in the console editor to get a 100% pass rate, and if you're willing to fuck around in the console I honestly reccomend doing things this way atm. Out of several thousand people having no problem my tool and with the model I included, I have seen some people getting picked up as kids with that same model, which I only picked becuase it worked for me and my mates and was only a few mb (I've added an older looking male model, you need to download the zip file, along with the zo1 and z02 file. My tool with some extra features and an older model (when I find a good one) will still be good for all selfie verifier tests in a few days instead of just Discord, but if the console script above works 100% of the time, consider using it just in case. 
 Credits to:
 https://kibty.town/
 https://github.com/Dziurwa14
 
-If you have a good older model in mind thats fully rigged and not anime styled, link it to me in the issue section so I can test it out.
 
 # UPDATE 2
 Discord "may" be adding blink tests now, so let me know if they are and ill map that with an update. Either way, Discord is rooted in the short/long term, time to bail. This will help anons who've been locked out if they need to find out where the server they were in is migrating to. Message me on X or Discord (womp) if they add in new requirements for the selfie-check, as I'll have no idea otherwise. If you find a better looking free model thats fully rigged, let me know and I'll update the repo
