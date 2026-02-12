@@ -26,6 +26,8 @@ Credits to:
 https://kibty.town/
 https://github.com/Dziurwa14
 
+If you have a good older model in mind thats fully rigged and not anime styled, link it to me in the issue section so I can test it out.
+
 # UPDATE 2
 Discord "may" be adding blink tests now, so let me know if they are and ill map that with an update. Either way, Discord is rooted in the short/long term, time to bail. This will help anons who've been locked out if they need to find out where the server they were in is migrating to. Message me on X or Discord (womp) if they add in new requirements for the selfie-check, as I'll have no idea otherwise. If you find a better looking free model thats fully rigged, let me know and I'll update the repo
 
