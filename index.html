@@ -153,6 +153,7 @@
       <div class="cr"><span>Head Pitch</span><span class="ck">W S / L-Stick Y</span></div>
       <div class="cr"><span>Head Roll</span><span class="ck">Q E / R-Stick X</span></div>
       <div class="cr"><span>Mouth</span><span class="ck">Space / RT</span></div>
+	  <div class="cr"><span>Mouth (Slow)</span><span class="ck">No. 1-5</span></div>
       <div class="cr"><span>Reset</span><span class="ck">R / Y Button</span></div>
     </div>
 
@@ -925,6 +926,11 @@ function processInput(){
   if(k['KeyS'])kP+=spd;if(k['KeyW'])kP-=spd;
   if(k['KeyQ'])kR+=spd;if(k['KeyE'])kR-=spd;
   if(k['Space'])kM=1;
+  if(k['Digit1'])kM=0.2;
+  if(k['Digit2'])kM=0.4;
+  if(k['Digit3'])kM=0.6;
+  if(k['Digit4'])kM=0.8;
+  if(k['Digit5'])kM=1;
   if(k['KeyR']){S.tY=S.tP=S.tR=S.tM=0;return}
 
   var gY=0,gP=0,gR=0,gM=0;
