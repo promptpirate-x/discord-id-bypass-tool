@@ -108,6 +108,8 @@
     .cr{font-size:9px;gap:6px}
     .ck{font-size:8px;padding:1px 5px}
   }
+  .hide-ui-elements{top:60px;left:20px}
+  .hidden{display:none}
 </style>
 </head>
 <body>
@@ -121,6 +123,11 @@
       <div style="font-size:12px;color:#c0c0cc"><span class="sd off" id="gp-dot"></span><span id="gp-status">No Gamepad</span></div>
       <div class="sub" id="gp-hint">Press any button on controller</div>
       <div class="sub">Keyboard: Always Active</div>
+    </div>
+
+    <div class="hp always-visible hide-ui-elements">
+      <div class="ht">UI Element Visibility</div>
+      <button class="cb" id="ui-hide">Hide UI</button>
     </div>
 
     <div class="hp sensitivity-panel">
@@ -193,6 +200,7 @@
       <div class="cr"><span>Head Pitch</span><span class="ck">W S / L-Stick Y</span></div>
       <div class="cr"><span>Head Roll</span><span class="ck">Q E / R-Stick X</span></div>
       <div class="cr"><span>Mouth</span><span class="ck">Space / RT</span></div>
+	  <div class="cr"><span>Mouth (Slow)</span><span class="ck">No. 1-5</span></div>
       <div class="cr"><span>Reset</span><span class="ck">R / Y Button</span></div>
     </div>
 
@@ -949,6 +957,16 @@ $('cam-reset').onclick=function(){
 };
 
 // ═══════════════════════════════════════════════════════
+// UI HIDE / SHOW
+// ═══════════════════════════════════════════════════════
+$('ui-hide').onclick=function(){
+	const elements=document.querySelectorAll('.hp:not(.always-visible)');
+	const isHidden = [...elements].every(el => el.classList.contains('hidden'));
+	elements.forEach(el => {el.classList.toggle('hidden')});
+    $('ui-hide').textContent = isHidden ? 'Hide UI' : 'Show UI';
+};
+
+// ═══════════════════════════════════════════════════════
 // GAMEPAD
 // ═══════════════════════════════════════════════════════
 window.addEventListener('gamepadconnected',function(e){
@@ -978,6 +996,11 @@ function processInput(){
   if(k['KeyS'])kP+=spd;if(k['KeyW'])kP-=spd;
   if(k['KeyQ'])kR+=spd;if(k['KeyE'])kR-=spd;
   if(k['Space'])kM=1;
+  if(k['Digit1'])kM=0.2;
+  if(k['Digit2'])kM=0.4;
+  if(k['Digit3'])kM=0.6;
+  if(k['Digit4'])kM=0.8;
+  if(k['Digit5'])kM=1;
   if(k['KeyR']){S.tY=S.tP=S.tR=S.tM=0;return}
 
   var gY=0,gP=0,gR=0,gM=0;
