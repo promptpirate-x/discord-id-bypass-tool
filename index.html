@@ -69,6 +69,8 @@
   .morph-map:hover{background:rgba(74,222,128,0.2);border-color:#4ade80}
   .morph-map.mapped{background:rgba(74,222,128,0.2);border-color:#4ade80;font-weight:600}
   .morph-auto{font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.25)}
+  .hide-ui-elements{top:60px;left:20px}
+  .hidden{display:none}
 </style>
 </head>
 <body>
@@ -81,6 +83,11 @@
       <div style="font-size:12px;color:#c0c0cc"><span class="sd off" id="gp-dot"></span><span id="gp-status">No Gamepad</span></div>
       <div class="sub" id="gp-hint">Press any button on controller</div>
       <div class="sub">Keyboard: Always Active</div>
+    </div>
+
+    <div class="hp always-visible hide-ui-elements">
+      <div class="ht">UI Element Visibility</div>
+      <button class="cb" id="ui-hide">Hide UI</button>
     </div>
 
     <div class="hp sensitivity-panel">
@@ -894,6 +901,16 @@ $('cam-body').onclick=function(){
 $('cam-reset').onclick=function(){
   if(loadedModel){var b=new THREE.Box3().setFromObject(loadedModel),c=b.getCenter(new THREE.Vector3()),s=b.getSize(new THREE.Vector3());animCam(c,Math.max(s.x,s.y,s.z)*2)}
   else animCam(new THREE.Vector3(0,0.3,0),3.5);
+};
+
+// ═══════════════════════════════════════════════════════
+// UI HIDE / SHOW
+// ═══════════════════════════════════════════════════════
+$('ui-hide').onclick=function(){
+	const elements=document.querySelectorAll('.hp:not(.always-visible)');
+	const isHidden = [...elements].every(el => el.classList.contains('hidden'));
+	elements.forEach(el => {el.classList.toggle('hidden')});
+    $('ui-hide').textContent = isHidden ? 'Hide UI' : 'Show UI';
 };
 
 // ═══════════════════════════════════════════════════════
