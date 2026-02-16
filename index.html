@@ -6,37 +6,59 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Space+Grotesk:wght@400;600&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#0a0a0f;color:#e0e0e8;font-family:'JetBrains Mono',monospace;overflow:hidden;height:100vh}
+  body{background:#0a0a0f;color:#e0e0e8;font-family:'JetBrains Mono',monospace;overflow:hidden;height:100vh;touch-action:none}
   canvas{display:block}
   .hud{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10}
-  .hp{position:absolute;background:rgba(10,10,20,0.85);backdrop-filter:blur(12px);border:1px solid rgba(100,220,255,0.15);border-radius:8px;padding:14px 18px;pointer-events:auto}
-  .ht{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2.5px;color:rgba(100,220,255,0.7);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .hp{position:absolute;background:rgba(10,10,20,0.85);backdrop-filter:blur(12px);border:1px solid rgba(100,220,255,0.15);border-radius:8px;padding:14px 18px;pointer-events:auto;user-select:none;max-width:90vw}
+  .hp>*:not(.ht){cursor:default}
+  .hp.collapsed>*:not(.ht){display:none!important}
+  .hp.collapsed{min-width:auto!important}
+  .ht{cursor:move}
+  .ht{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2.5px;color:rgba(100,220,255,0.7);margin-bottom:10px;display:flex;align-items:center;gap:8px;justify-content:space-between}
   .ht::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:#64dcff;box-shadow:0 0 8px #64dcff}
-  .main-title{position:absolute;top:20px;left:20px;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;letter-spacing:1px;color:#e8e8f0;text-shadow:0 0 20px rgba(100,220,255,0.3);pointer-events:none}
+  .ht-toggle{cursor:pointer;opacity:0.5;font-size:14px;line-height:1;padding:0 4px}
+  .ht-toggle:hover{opacity:1}
+  .main-title{position:absolute;top:20px;left:20px;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;letter-spacing:1px;color:#e8e8f0;text-shadow:0 0 20px rgba(100,220,255,0.3);pointer-events:none;text-align:left;z-index:5}
   .main-title span{color:#64dcff}
-  .controller-status{top:20px;right:20px}
+  .controller-status{top:60px;right:20px}
+  .sensitivity-panel{top:20px;left:400px}
+  .model-panel{top:180px;right:20px;max-width:380px;max-height:calc(100vh - 200px);overflow-y:auto}
+  .model-panel::-webkit-scrollbar{width:5px}.model-panel::-webkit-scrollbar-track{background:transparent}.model-panel::-webkit-scrollbar-thumb{background:rgba(100,220,255,0.2);border-radius:3px}
+  .controls-panel{bottom:180px;left:20px;max-width:320px}
+  .values-panel{bottom:20px;left:20px;min-width:220px;max-width:320px}
+  .kid-panel{top:60px;left:20px;max-width:360px;max-height:calc(100vh - 200px);overflow-y:auto}
+  .kid-panel::-webkit-scrollbar{width:5px}.kid-panel::-webkit-scrollbar-track{background:transparent}.kid-panel::-webkit-scrollbar-thumb{background:rgba(100,220,255,0.2);border-radius:3px}
+  @media(max-width:768px){
+    .hp{font-size:10px;padding:10px 12px;max-width:calc(100vw - 20px)}
+    .hp.collapsed>*:not(.ht){display:none!important}
+    .hp.collapsed{min-width:auto!important;padding:8px 10px!important}
+    .main-title{font-size:14px;top:10px;left:10px}
+    .controller-status{top:35px;right:10px;max-width:calc(48vw - 15px)}
+    .sensitivity-panel{top:35px;left:10px;max-width:calc(48vw - 15px)}
+    .kid-panel{top:100px;left:10px;max-width:calc(100vw - 20px);max-height:25vh;overflow-y:auto}
+    .model-panel{top:calc(25vh + 110px);left:10px;max-width:calc(100vw - 20px);max-height:25vh;overflow-y:auto}
+    .controls-panel{top:calc(50vh + 120px);left:10px;max-width:calc(48vw - 15px)}
+    .values-panel{top:calc(50vh + 120px);right:10px;max-width:calc(48vw - 15px)}
+    .ht{font-size:10px;letter-spacing:1.5px}
+    .hide-ui-btn{top:10px;right:10px;font-size:9px;padding:4px 10px;transform:none}
+  }
   .sd{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
   .sd.on{background:#4ade80;box-shadow:0 0 8px #4ade80}.sd.off{background:#f87171;box-shadow:0 0 8px #f87171}
-  .controls-panel{bottom:20px;left:20px;max-width:320px}
   .cr{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:11px;color:#a0a0b0;gap:12px}
   .ck{background:rgba(100,220,255,0.1);border:1px solid rgba(100,220,255,0.25);border-radius:4px;padding:2px 8px;font-size:10px;color:#64dcff;font-family:'JetBrains Mono',monospace;white-space:nowrap}
-  .values-panel{bottom:20px;right:20px;min-width:220px}
   .vr{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:12px}
   .vl{color:#808090}.vn{color:#64dcff;font-weight:600;font-variant-numeric:tabular-nums}
   .vbt{width:80px;height:4px;background:rgba(100,220,255,0.1);border-radius:2px;overflow:hidden;margin-left:10px}
   .vbf{height:100%;background:linear-gradient(90deg,#64dcff,#a78bfa);border-radius:2px;transition:width 0.05s linear}
-  .sensitivity-panel{top:20px;left:28%;transform:translateX(-50%)}
   .sr{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:11px;color:#a0a0b0}
   .sb{background:rgba(100,220,255,0.1);border:1px solid rgba(100,220,255,0.3);color:#64dcff;width:22px;height:22px;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
   .sb:hover{background:rgba(100,220,255,0.25)}
   .sv{color:#64dcff;font-weight:600;min-width:30px;text-align:center}
   .cb{flex:1;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:#a78bfa;padding:5px 8px;border-radius:4px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.3px;white-space:nowrap}
   .cb:hover{background:rgba(167,139,250,0.2);border-color:rgba(167,139,250,0.5)}
-  .model-panel{top:80px;right:20px;max-width:380px;max-height:calc(100vh - 200px);overflow-y:auto}
-  .model-panel::-webkit-scrollbar{width:5px}.model-panel::-webkit-scrollbar-track{background:transparent}.model-panel::-webkit-scrollbar-thumb{background:rgba(100,220,255,0.2);border-radius:3px}
   .lbtn{background:rgba(100,220,255,0.1);border:1px solid rgba(100,220,255,0.3);color:#64dcff;padding:8px 16px;border-radius:6px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.5px;width:100%}
   .lbtn:hover{background:rgba(100,220,255,0.2);border-color:rgba(100,220,255,0.5)}
-  #model-file{display:none}
+  #model-file,#model-multi{display:none}
   .li{font-size:10px;color:#707080;margin-top:8px;line-height:1.5;white-space:pre-line}
   .err{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:4px;padding:8px;margin-top:8px;font-size:10px;color:#f87171;display:none;word-break:break-all}
   .ok-box{background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:4px;padding:8px;margin-top:8px;font-size:10px;color:#4ade80;display:none;white-space:pre-line;line-height:1.5}
@@ -69,17 +91,35 @@
   .morph-map:hover{background:rgba(74,222,128,0.2);border-color:#4ade80}
   .morph-map.mapped{background:rgba(74,222,128,0.2);border-color:#4ade80;font-weight:600}
   .morph-auto{font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.25)}
+  .hp{cursor:move;user-select:none}
+  .hp.dragging{opacity:0.8;z-index:999}
+  .hide-ui-btn{position:absolute;top:20px;right:20px;background:rgba(10,10,20,0.85);backdrop-filter:blur(12px);border:1px solid rgba(100,220,255,0.15);border-radius:6px;padding:6px 14px;color:#64dcff;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;pointer-events:auto;z-index:20}
+  .hide-ui-btn:hover{background:rgba(100,220,255,0.15)}
+  .hud.hidden .hp{display:none!important}
+  .hud.hidden .hide-ui-btn{display:block!important}
+  .kid-input{background:rgba(10,10,20,0.9);border:1px solid rgba(100,220,255,0.2);color:#e0e0e8;padding:6px 10px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;width:100%;margin-top:4px}
+  .kid-btn{background:rgba(100,220,255,0.1);border:1px solid rgba(100,220,255,0.3);color:#64dcff;padding:8px 16px;border-radius:6px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;width:100%;margin-top:8px}
+  .kid-btn:hover{background:rgba(100,220,255,0.2)}
+  .kid-output{background:rgba(10,10,20,0.95);border:1px solid rgba(100,220,255,0.2);border-radius:4px;padding:8px;margin-top:8px;font-size:9px;color:#a0a0b0;max-height:200px;overflow-y:auto;font-family:'JetBrains Mono',monospace;white-space:pre-wrap;word-break:break-all;display:none}
+  .kid-output::-webkit-scrollbar{width:4px}.kid-output::-webkit-scrollbar-track{background:transparent}.kid-output::-webkit-scrollbar-thumb{background:rgba(100,220,255,0.2);border-radius:2px}
+  @media(max-width:768px){
+    .orbit-hint{display:none}
+    .vbt{width:50px}
+    .cr{font-size:9px;gap:6px}
+    .ck{font-size:8px;padding:1px 5px}
+  }
   .hide-ui-elements{top:60px;left:20px}
   .hidden{display:none}
 </style>
 </head>
 <body>
 <div id="canvas-container" style="width:100vw;height:100vh;position:relative;">
-  <div class="hud">
+  <div class="hud" id="hud">
+    <button class="hide-ui-btn" id="hide-ui-btn">Hide UI [H]</button>
     <div class="main-title"><span>☠</span> Discord ID Bypass Tool <span style="font-size:11px;opacity:0.5;margin-left:6px">by PromptPirate</span></div>
 
     <div class="hp controller-status">
-      <div class="ht">Input</div>
+      <div class="ht">Input<span class="ht-toggle">−</span></div>
       <div style="font-size:12px;color:#c0c0cc"><span class="sd off" id="gp-dot"></span><span id="gp-status">No Gamepad</span></div>
       <div class="sub" id="gp-hint">Press any button on controller</div>
       <div class="sub">Keyboard: Always Active</div>
@@ -91,7 +131,7 @@
     </div>
 
     <div class="hp sensitivity-panel">
-      <div class="ht">Sensitivity</div>
+      <div class="ht">Sensitivity<span class="ht-toggle">−</span></div>
       <div class="sr"><span style="min-width:45px">Head</span><button class="sb" id="hs-d">−</button><span class="sv" id="hs-v">1.0</span><button class="sb" id="hs-u">+</button></div>
       <div class="sr"><span style="min-width:45px">Mouth</span><button class="sb" id="ms-d">−</button><span class="sv" id="ms-v">1.0</span><button class="sb" id="ms-u">+</button></div>
       <div class="sr"><span style="min-width:45px;color:#f97316">Range</span><button class="sb" id="mr-d" style="border-color:rgba(249,115,22,0.3);color:#f97316">−</button><span class="sv" id="mr-v" style="color:#f97316">100%</span><button class="sb" id="mr-u" style="border-color:rgba(249,115,22,0.3);color:#f97316">+</button></div>
@@ -103,7 +143,7 @@
     </div>
 
     <div class="hp model-panel" id="model-panel">
-      <div class="ht">Model</div>
+      <div class="ht">Model<span class="ht-toggle">−</span></div>
       <button class="lbtn" id="load-btn">Load Model File</button>
       <input type="file" id="model-file" accept=".vrm,.fbx,.glb,.gltf,.zip" />
       <input type="file" id="model-multi" accept=".fbx,.png,.jpg,.jpeg,.tga,.bmp" multiple style="display:none" />
@@ -125,7 +165,7 @@
 
       <!-- Bone assignment dropdowns -->
       <div id="bone-section" style="display:none;margin-top:12px">
-        <div class="ht">Bone Assignment</div>
+        <div class="ht">Bone Assignment<span class="ht-toggle">−</span></div>
         <div class="brow"><span class="blbl hd">Head</span><select class="bsel" id="sel-head"><option value="">(none)</option></select></div>
         <div class="brow"><span class="blbl nk">Neck</span><select class="bsel" id="sel-neck"><option value="">(none)</option></select></div>
         <div class="brow"><span class="blbl jw">Jaw</span><select class="bsel" id="sel-jaw"><option value="">(none)</option></select></div>
@@ -155,7 +195,7 @@
     </div>
 
     <div class="hp controls-panel">
-      <div class="ht">Controls</div>
+      <div class="ht">Controls<span class="ht-toggle">−</span></div>
       <div class="cr"><span>Head Yaw</span><span class="ck">A D / L-Stick X</span></div>
       <div class="cr"><span>Head Pitch</span><span class="ck">W S / L-Stick Y</span></div>
       <div class="cr"><span>Head Roll</span><span class="ck">Q E / R-Stick X</span></div>
@@ -165,15 +205,28 @@
     </div>
 
     <div class="hp values-panel">
-      <div class="ht">State</div>
+      <div class="ht">State<span class="ht-toggle">−</span></div>
       <div class="vr"><span class="vl">Yaw</span><span class="vn" id="v-yaw">0.0°</span></div>
       <div class="vr"><span class="vl">Pitch</span><span class="vn" id="v-pitch">0.0°</span></div>
       <div class="vr"><span class="vl">Roll</span><span class="vn" id="v-roll">0.0°</span></div>
       <div class="vr"><span class="vl">Mouth</span><div style="display:flex;align-items:center"><span class="vn" id="v-mouth" style="margin-right:8px">0%</span><div class="vbt"><div class="vbf" id="mouth-bar" style="width:0%"></div></div></div></div>
     </div>
+
+    <div class="hp kid-panel" id="kid-panel">
+      <div class="ht">k-ID Bypass<span class="ht-toggle">−</span></div>
+      <div style="font-size:10px;color:#707080;margin-bottom:6px">Generate bypass payload for Discord age verification</div>
+      <label style="font-size:10px;color:#a0a0b0">Target Age:</label>
+      <input type="number" class="kid-input" id="kid-age" value="25" min="18" max="99" />
+      <button class="kid-btn" id="kid-generate">Generate Bypass Data</button>
+      <button class="kid-btn" id="kid-test" style="opacity:0.7;font-size:10px;padding:5px 10px;margin-top:4px">Test Mode (No Encryption)</button>
+      <div class="kid-output" id="kid-output"></div>
+    </div>
+
     <div class="orbit-hint">Right-click drag to orbit · Scroll to zoom</div>
   </div>
 </div>
+
+<script src="kid-bypass.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -1027,6 +1080,102 @@ function animate(){
 animate();
 
 window.addEventListener('resize',function(){cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();ren.setSize(innerWidth,innerHeight)});
+
+// ═══════════════════════════════════════════════════════
+// DRAG PANELS (Desktop + Mobile)
+// ═══════════════════════════════════════════════════════
+(function(){
+  var dragEl=null,offsetX=0,offsetY=0;
+  
+  function startDrag(e,clientX,clientY){
+    // Only drag from header (.ht)
+    if(e.target.closest('.ht')&&!e.target.closest('.ht-toggle')){
+      dragEl=e.target.closest('.hp');
+      dragEl.classList.add('dragging');
+      var rect=dragEl.getBoundingClientRect();
+      offsetX=clientX-rect.left;offsetY=clientY-rect.top;
+      e.preventDefault();
+    }
+  }
+  
+  function moveDrag(clientX,clientY){
+    if(!dragEl)return;
+    dragEl.style.left=Math.max(0,Math.min(innerWidth-dragEl.offsetWidth,clientX-offsetX))+'px';
+    dragEl.style.top=Math.max(0,Math.min(innerHeight-dragEl.offsetHeight,clientY-offsetY))+'px';
+    dragEl.style.right='auto';dragEl.style.bottom='auto';
+  }
+  
+  function endDrag(){
+    if(dragEl){dragEl.classList.remove('dragging');dragEl=null}
+  }
+  
+  // Mouse events
+  document.addEventListener('mousedown',function(e){startDrag(e,e.clientX,e.clientY)});
+  document.addEventListener('mousemove',function(e){if(dragEl)moveDrag(e.clientX,e.clientY)});
+  document.addEventListener('mouseup',endDrag);
+  
+  // Touch events
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length===1)startDrag(e,e.touches[0].clientX,e.touches[0].clientY)
+  },{passive:false});
+  document.addEventListener('touchmove',function(e){
+    if(dragEl&&e.touches.length===1){moveDrag(e.touches[0].clientX,e.touches[0].clientY);e.preventDefault()}
+  },{passive:false});
+  document.addEventListener('touchend',endDrag);
+  
+  // Toggle collapse
+  document.addEventListener('click',function(e){
+    if(e.target.classList.contains('ht-toggle')){
+      var panel=e.target.closest('.hp');
+      panel.classList.toggle('collapsed');
+      e.target.textContent=panel.classList.contains('collapsed')?'+':'−';
+    }
+  });
+})();
+
+// ═══════════════════════════════════════════════════════
+// HIDE UI
+// ═══════════════════════════════════════════════════════
+$('hide-ui-btn').onclick=function(){
+  var hud=$('hud');
+  hud.classList.toggle('hidden');
+  this.textContent=hud.classList.contains('hidden')?'Show UI [H]':'Hide UI [H]';
+};
+window.addEventListener('keydown',function(e){
+  if(e.code==='KeyH'&&!e.target.closest('input,select,textarea')){
+    $('hide-ui-btn').click();
+  }
+});
+
+// Auto-collapse all panels on mobile (run after DOM ready)
+if(innerWidth<=768){
+  document.querySelectorAll('.hp').forEach(function(panel){
+    panel.classList.add('collapsed');
+    var toggle=panel.querySelector('.ht-toggle');
+    if(toggle)toggle.textContent='+';
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// k-ID BYPASS
+// ═══════════════════════════════════════════════════════
+$('kid-generate').onclick=async function(){
+  var age=parseInt($('kid-age').value)||25;
+  var out=$('kid-output');
+  out.textContent='Generating...';out.style.display='block';
+  try{
+    var result=await KIDBypass.intercept(age);
+    out.textContent=JSON.stringify(result,null,2);
+  }catch(err){
+    out.textContent='Error: '+err.message;
+  }
+};
+$('kid-test').onclick=function(){
+  var age=parseInt($('kid-age').value)||25;
+  var out=$('kid-output');
+  out.textContent=JSON.stringify(KIDBypass.test(age),null,2);
+  out.style.display='block';
+};
 
 console.log('[HC] Initialized. Three.js r'+THREE.REVISION);
 </script>
