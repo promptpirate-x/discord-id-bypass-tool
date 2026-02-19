@@ -110,12 +110,181 @@
   }
   .hide-ui-elements{top:60px;left:20px}
   .hidden{display:none}
+  
+  /* ═══════════════════════════════════════════════════════
+     QUICK START TUTORIAL
+     ═══════════════════════════════════════════════════════ */
+  .tutorial-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,10,15,0.95);backdrop-filter:blur(8px);z-index:10000;display:none;align-items:center;justify-content:center}
+  .tutorial-overlay.active{display:flex}
+  .tutorial-card{background:rgba(10,10,20,0.95);border:2px solid rgba(100,220,255,0.3);border-radius:12px;padding:32px;max-width:500px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+  .tutorial-title{font-family:'Space Grotesk',sans-serif;font-size:24px;color:#64dcff;margin-bottom:16px;letter-spacing:1px}
+  .tutorial-text{font-size:14px;color:#c0c0cc;line-height:1.8;margin-bottom:24px}
+  .tutorial-step{font-size:12px;color:#808090;margin-bottom:20px}
+  .tutorial-highlight{color:#64dcff;font-weight:600;background:rgba(100,220,255,0.1);padding:2px 8px;border-radius:4px}
+  .tutorial-btn{background:linear-gradient(135deg,#64dcff,#a78bfa);border:none;color:#0a0a0f;padding:12px 32px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.5px;transition:transform 0.2s}
+  .tutorial-btn:hover{transform:scale(1.05)}
+  .tutorial-skip{margin-top:16px;font-size:11px;color:#606070;cursor:pointer;text-decoration:underline}
+  .tutorial-skip:hover{color:#64dcff}
+  .tutorial-progress{display:flex;gap:8px;justify-content:center;margin-top:20px}
+  .tutorial-dot{width:8px;height:8px;border-radius:50%;background:rgba(100,220,255,0.2);transition:all 0.3s}
+  .tutorial-dot.active{background:#64dcff;width:24px;border-radius:4px}
+
+  /* ═══════════════════════════════════════════════════════
+     MOBILE VIRTUAL JOYSTICK
+     ═══════════════════════════════════════════════════════ */
+  .mobile-controls{position:fixed;bottom:20px;left:0;right:0;display:none;justify-content:space-between;padding:0 20px;pointer-events:none;z-index:100}
+  @media(max-width:768px){.mobile-controls{display:flex}}
+  .joystick-container{width:120px;height:120px;position:relative;pointer-events:auto}
+  .joystick-base{width:100%;height:100%;border-radius:50%;background:rgba(10,10,20,0.6);backdrop-filter:blur(8px);border:2px solid rgba(100,220,255,0.3);position:relative}
+  .joystick-stick{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#64dcff,#a78bfa);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 4px 12px rgba(100,220,255,0.4);transition:all 0.1s}
+  .joystick-label{position:absolute;top:-25px;left:50%;transform:translateX(-50%);font-size:10px;color:#64dcff;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+  .mobile-btn-group{display:flex;flex-direction:column;gap:12px;pointer-events:auto}
+  .mobile-btn{width:60px;height:60px;border-radius:50%;background:rgba(10,10,20,0.6);backdrop-filter:blur(8px);border:2px solid rgba(100,220,255,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;color:#64dcff;font-family:'JetBrains Mono',monospace;font-weight:600;touch-action:none;user-select:none}
+  .mobile-btn.active{background:rgba(100,220,255,0.3);border-color:#64dcff;box-shadow:0 0 20px rgba(100,220,255,0.5)}
+
+  /* ═══════════════════════════════════════════════════════
+     PHONEME SELECTOR
+     ═══════════════════════════════════════════════════════ */
+  .phoneme-panel{position:absolute;bottom:20px;right:20px;background:rgba(10,10,20,0.85);backdrop-filter:blur(12px);border:1px solid rgba(100,220,255,0.15);border-radius:8px;padding:14px;pointer-events:auto;display:none}
+  @media(max-width:768px){.phoneme-panel{bottom:160px;right:10px}}
+  .phoneme-panel.visible{display:block}
+  .phoneme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .phoneme-btn{width:50px;height:50px;border-radius:8px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:#a78bfa;font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
+  .phoneme-btn:hover{background:rgba(167,139,250,0.25);border-color:#a78bfa;transform:scale(1.1)}
+  .phoneme-btn.active{background:rgba(167,139,250,0.3);border-color:#a78bfa;box-shadow:0 0 16px rgba(167,139,250,0.5)}
+  .phoneme-toggle{position:absolute;top:20px;right:380px;background:rgba(10,10,20,0.85);backdrop-filter:blur(12px);border:1px solid rgba(100,220,255,0.15);border-radius:6px;padding:6px 14px;color:#a78bfa;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;pointer-events:auto;z-index:20}
+  .phoneme-toggle:hover{background:rgba(167,139,250,0.15)}
+  @media(max-width:768px){.phoneme-toggle{top:10px;right:10px}}
+
+  /* ═══════════════════════════════════════════════════════
+     SKELETON LOADING
+     ═══════════════════════════════════════════════════════ */
+  .skeleton-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#0a0a0f;z-index:9999;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity 0.4s ease}
+  .skeleton-overlay.fade-out{opacity:0;pointer-events:none}
+  .skeleton-container{width:90%;max-width:1400px;height:90vh;display:grid;grid-template-columns:1fr 2fr 1fr;grid-template-rows:auto 1fr auto;gap:20px;padding:20px}
+  
+  /* Skeleton shimmer animation */
+  @keyframes shimmer{0%{background-position:-1000px 0}100%{background-position:1000px 0}}
+  .skeleton-box{background:linear-gradient(90deg,rgba(100,220,255,0.03) 0%,rgba(100,220,255,0.08) 50%,rgba(100,220,255,0.03) 100%);background-size:1000px 100%;animation:shimmer 2s infinite linear;border:1px solid rgba(100,220,255,0.1);border-radius:8px;position:relative;overflow:hidden}
+  .skeleton-box::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent 0%,rgba(100,220,255,0.15) 50%,transparent 100%);animation:shimmer 2s infinite linear}
+  
+  /* Header skeleton */
+  .skeleton-header{grid-column:1/4;height:60px;display:flex;align-items:center;padding:0 20px;gap:12px}
+  .skeleton-logo{width:24px;height:24px;border-radius:4px;background:rgba(100,220,255,0.15)}
+  .skeleton-title{flex:1;height:20px;max-width:300px;border-radius:4px}
+  
+  /* Left panel (controls) */
+  .skeleton-left{grid-column:1;grid-row:2;display:flex;flex-direction:column;gap:20px}
+  .skeleton-panel{padding:18px;display:flex;flex-direction:column;gap:12px}
+  .skeleton-panel-header{height:14px;width:60%;border-radius:3px;background:rgba(100,220,255,0.2);margin-bottom:8px}
+  .skeleton-row{height:28px;border-radius:4px;background:rgba(100,220,255,0.05)}
+  .skeleton-row.tall{height:40px}
+  .skeleton-row.short{height:20px;width:70%}
+  
+  /* Center canvas */
+  .skeleton-canvas{grid-column:2;grid-row:1/4;background:radial-gradient(circle at center,rgba(100,220,255,0.05) 0%,transparent 70%);border:1px solid rgba(100,220,255,0.08);border-radius:12px;position:relative}
+  .skeleton-canvas::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border:3px solid rgba(100,220,255,0.2);border-top-color:#64dcff;border-radius:50%;animation:spin 1.5s linear infinite}
+  @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  .skeleton-canvas-text{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(100,220,255,0.5);font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+  
+  /* Right panel (model) */
+  .skeleton-right{grid-column:3;grid-row:2;display:flex;flex-direction:column;gap:20px}
+  .skeleton-button{height:36px;border-radius:6px;background:rgba(100,220,255,0.08);border:1px solid rgba(100,220,255,0.15)}
+  .skeleton-dropzone{height:80px;border:2px dashed rgba(100,220,255,0.15);border-radius:6px;background:rgba(100,220,255,0.02)}
+  
+  /* Footer skeleton */
+  .skeleton-footer{grid-column:1/4;height:100px;display:flex;gap:20px}
+  .skeleton-footer-panel{flex:1;padding:18px}
+  
+  /* Mobile responsive */
+  @media(max-width:768px){
+    .skeleton-container{grid-template-columns:1fr;grid-template-rows:auto auto 1fr auto;gap:12px;padding:12px}
+    .skeleton-header{grid-column:1;height:50px}
+    .skeleton-left{grid-column:1;grid-row:2}
+    .skeleton-canvas{grid-column:1;grid-row:3;min-height:300px}
+    .skeleton-right{grid-column:1;grid-row:4}
+    .skeleton-footer{grid-column:1;grid-row:5;flex-direction:column;height:auto}
+  }
 </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════════════════
+     QUICK START TUTORIAL
+     ═══════════════════════════════════════════════════════ -->
+<div class="tutorial-overlay" id="tutorial-overlay">
+  <div class="tutorial-card">
+    <div class="tutorial-title" id="tut-title">Welcome to Discord ID Bypass</div>
+    <div class="tutorial-text" id="tut-text">Let's get you started in 3 simple steps</div>
+    <div class="tutorial-step" id="tut-step"></div>
+    <button class="tutorial-btn" id="tut-btn">Start</button>
+    <div class="tutorial-skip" id="tut-skip">Skip tutorial</div>
+    <div class="tutorial-progress" id="tut-progress"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SKELETON LOADING OVERLAY
+     ═══════════════════════════════════════════════════════ -->
+<div class="skeleton-overlay" id="skeleton-overlay">
+  <div class="skeleton-container">
+    <!-- Header -->
+    <div class="skeleton-header skeleton-box">
+      <div class="skeleton-logo"></div>
+      <div class="skeleton-title"></div>
+    </div>
+    
+    <!-- Left panels -->
+    <div class="skeleton-left">
+      <div class="skeleton-box skeleton-panel">
+        <div class="skeleton-panel-header"></div>
+        <div class="skeleton-row short"></div>
+        <div class="skeleton-row short"></div>
+      </div>
+      <div class="skeleton-box skeleton-panel">
+        <div class="skeleton-panel-header"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+      </div>
+    </div>
+    
+    <!-- Center canvas -->
+    <div class="skeleton-canvas skeleton-box">
+      <div class="skeleton-canvas-text">INITIALIZING THREE.JS</div>
+    </div>
+    
+    <!-- Right panel -->
+    <div class="skeleton-right">
+      <div class="skeleton-box skeleton-panel">
+        <div class="skeleton-panel-header"></div>
+        <div class="skeleton-button"></div>
+        <div class="skeleton-dropzone"></div>
+        <div class="skeleton-row short"></div>
+        <div class="skeleton-row short"></div>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="skeleton-footer">
+      <div class="skeleton-box skeleton-footer-panel">
+        <div class="skeleton-panel-header"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+      </div>
+      <div class="skeleton-box skeleton-footer-panel">
+        <div class="skeleton-panel-header"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="canvas-container" style="width:100vw;height:100vh;position:relative;">
   <div class="hud" id="hud">
     <button class="hide-ui-btn" id="hide-ui-btn">Hide UI [H]</button>
+    <button class="phoneme-toggle" id="phoneme-toggle">Phonemes [P]</button>
     <div class="main-title"><span>☠</span> Discord ID Bypass Tool <span style="font-size:11px;opacity:0.5;margin-left:6px">by PromptPirate</span></div>
 
     <div class="hp controller-status">
@@ -223,6 +392,33 @@
     </div>
 
     <div class="orbit-hint">Right-click drag to orbit · Scroll to zoom</div>
+    
+    <!-- Phoneme Panel -->
+    <div class="phoneme-panel" id="phoneme-panel">
+      <div class="phoneme-grid">
+        <button class="phoneme-btn" data-phoneme="a">A</button>
+        <button class="phoneme-btn" data-phoneme="e">E</button>
+        <button class="phoneme-btn" data-phoneme="i">I</button>
+        <button class="phoneme-btn" data-phoneme="o">O</button>
+        <button class="phoneme-btn" data-phoneme="u">U</button>
+        <button class="phoneme-btn" data-phoneme="neutral">—</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Mobile Controls -->
+  <div class="mobile-controls">
+    <div class="joystick-container" id="joystick-head">
+      <div class="joystick-label">HEAD</div>
+      <div class="joystick-base">
+        <div class="joystick-stick" id="joystick-head-stick"></div>
+      </div>
+    </div>
+    <div class="mobile-btn-group">
+      <div class="mobile-btn" id="mobile-mouth">MOUTH</div>
+      <div class="mobile-btn" id="mobile-roll-l">ROLL L</div>
+      <div class="mobile-btn" id="mobile-roll-r">ROLL R</div>
+    </div>
   </div>
 </div>
 
@@ -234,10 +430,11 @@
 // CONFIG & STATE
 // ═══════════════════════════════════════════════════════
 var CFG={hS:1,mS:1,mRange:1.0,yawMax:80,pitchMax:50,rollMax:35,dz:0.12,sm:0.12,msm:0.15,jawAxis:'x',jawDir:1,jawAngle:0.4};
-var S={tY:0,tP:0,tR:0,tM:0,cY:0,cP:0,cR:0,cM:0,keys:{}};
-var A={head:null,neck:null,jaw:null,headI:null,neckI:null,jawI:null,morphMesh:null,morphIdx:-1};
+var S={tY:0,tP:0,tR:0,tM:0,cY:0,cP:0,cR:0,cM:0,keys:{},phoneme:'neutral',gyroEnabled:false};
+var A={head:null,neck:null,jaw:null,headI:null,neckI:null,jawI:null,morphMesh:null,morphIdx:-1,phonemeMorphs:{}};
 var loadedModel=null, vrmData=null, allBones=[];
 var orbitTarget=new THREE.Vector3(0,0.3,0),orbitTheta=0,orbitPhi=0.15,orbitDist=3.5,isDrag=false,lastM={x:0,y:0};
+var mobileJoystick={active:false,startX:0,startY:0,currentX:0,currentY:0};
 
 function $(id){return document.getElementById(id)}
 function showErr(m){$('err-box').textContent=m;$('err-box').style.display='block';$('ok-box').style.display='none'}
@@ -534,7 +731,7 @@ function loadFBX(url,name){
 function prepareScene(obj,fileName){
   if(loadedModel) scene.remove(loadedModel);
   A.head=A.neck=A.jaw=null;A.headI=A.neckI=A.jawI=null;
-  A.morphMesh=null;A.morphIdx=-1;allBones=[];vrmData=null;
+  A.morphMesh=null;A.morphIdx=-1;A.phonemeMorphs={};allBones=[];vrmData=null;
 
   loadedModel=obj;
 
@@ -633,6 +830,30 @@ function prepareScene(obj,fileName){
         var n=activeRow.querySelector('.morph-tester-name');if(n)n.classList.add('active');
         var b=activeRow.querySelector('.morph-map');if(b){b.classList.add('mapped');b.textContent='✓ Mapped'}
       }
+    }
+    
+    // Auto-detect phoneme morphs (A, E, I, O, U)
+    var phonemePatterns={
+      a: [/\baa?\b/i, /viseme.*aa/i, /mouth.*a$/i],
+      e: [/\bee?\b/i, /viseme.*ee/i, /mouth.*e$/i],
+      i: [/\bii?\b/i, /viseme.*ii/i, /mouth.*i$/i],
+      o: [/\boo?\b/i, /viseme.*oh/i, /mouth.*o$/i],
+      u: [/\buu?\b/i, /viseme.*uu/i, /mouth.*u$/i]
+    };
+    for(var ph in phonemePatterns){
+      for(var i=0;i<allMorphs.length;i++){
+        for(var p=0;p<phonemePatterns[ph].length;p++){
+          if(phonemePatterns[ph][p].test(allMorphs[i].name)){
+            A.phonemeMorphs[ph]={mesh:allMorphs[i].mesh,idx:allMorphs[i].idx};
+            break;
+          }
+        }
+        if(A.phonemeMorphs[ph]) break;
+      }
+    }
+    if(Object.keys(A.phonemeMorphs).length>0){
+      $('phoneme-toggle').style.display='block';
+      console.log('[Phoneme] Auto-detected:',Object.keys(A.phonemeMorphs));
     }
   } else {
     $('morph-section').style.display='none';
@@ -1057,6 +1278,12 @@ function applyToModel(){
   if(A.morphMesh&&A.morphIdx>=0){
     A.morphMesh.morphTargetInfluences[A.morphIdx]=S.cM*CFG.mRange;
   }
+  
+  // Apply phoneme morphs
+  if(S.phoneme!=='neutral'&&A.phonemeMorphs[S.phoneme]){
+    var pm=A.phonemeMorphs[S.phoneme];
+    pm.mesh.morphTargetInfluences[pm.idx]=0.8;
+  }
 }
 
 function updateHUD(){
@@ -1178,6 +1405,228 @@ $('kid-test').onclick=function(){
 };
 
 console.log('[HC] Initialized. Three.js r'+THREE.REVISION);
+
+// ═══════════════════════════════════════════════════════
+// QUICK START TUTORIAL
+// ═══════════════════════════════════════════════════════
+(function(){
+  var steps=[
+    {title:'Welcome!',text:'This tool lets you control a 3D avatar to bypass Discord age verification',step:'Step 1: Load a model using the panel on the right →'},
+    {title:'Control Your Avatar',text:'Use WASD for head movement, Space for mouth opening',step:'Step 2: Adjust sensitivity and test controls'},
+    {title:'Ready to Go!',text:'When ready, use OBS Virtual Camera to capture this window',step:'Step 3: Open Discord and start verification'}
+  ];
+  var current=0;
+  var overlay=$('tutorial-overlay');
+  var hasSeenTutorial=localStorage.getItem('tutorial_seen');
+  
+  function showStep(i){
+    current=i;
+    $('tut-title').textContent=steps[i].title;
+    $('tut-text').textContent=steps[i].text;
+    $('tut-step').textContent=steps[i].step;
+    $('tut-btn').textContent=i===steps.length-1?'Got it!':'Next';
+    var prog=$('tut-progress');
+    prog.innerHTML='';
+    for(var j=0;j<steps.length;j++){
+      var dot=document.createElement('div');
+      dot.className='tutorial-dot'+(j===i?' active':'');
+      prog.appendChild(dot);
+    }
+  }
+  
+  $('tut-btn').onclick=function(){
+    if(current<steps.length-1){showStep(current+1)}
+    else{overlay.classList.remove('active');localStorage.setItem('tutorial_seen','1')}
+  };
+  $('tut-skip').onclick=function(){overlay.classList.remove('active');localStorage.setItem('tutorial_seen','1')};
+  
+  if(!hasSeenTutorial){
+    setTimeout(function(){overlay.classList.add('active');showStep(0)},1000);
+  }
+})();
+
+// ═══════════════════════════════════════════════════════
+// PHONEME CONTROLS
+// ═══════════════════════════════════════════════════════
+$('phoneme-toggle').onclick=function(){
+  var panel=$('phoneme-panel');
+  panel.classList.toggle('visible');
+};
+document.querySelectorAll('.phoneme-btn').forEach(function(btn){
+  btn.onclick=function(){
+    document.querySelectorAll('.phoneme-btn').forEach(function(b){b.classList.remove('active')});
+    this.classList.add('active');
+    S.phoneme=this.getAttribute('data-phoneme');
+    // Reset all phoneme morphs
+    for(var ph in A.phonemeMorphs){
+      A.phonemeMorphs[ph].mesh.morphTargetInfluences[A.phonemeMorphs[ph].idx]=0;
+    }
+  };
+});
+window.addEventListener('keydown',function(e){
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+  if(e.code==='KeyP'){$('phoneme-toggle').click()}
+});
+
+// ═══════════════════════════════════════════════════════
+// MOBILE VIRTUAL JOYSTICK
+// ═══════════════════════════════════════════════════════
+(function(){
+  var joyHead=$('joystick-head');
+  var joyStick=$('joystick-head-stick');
+  var baseRect=null;
+  
+  function startJoy(e){
+    e.preventDefault();
+    baseRect=joyHead.getBoundingClientRect();
+    mobileJoystick.active=true;
+    mobileJoystick.startX=baseRect.left+baseRect.width/2;
+    mobileJoystick.startY=baseRect.top+baseRect.height/2;
+  }
+  function moveJoy(e){
+    if(!mobileJoystick.active)return;
+    e.preventDefault();
+    var touch=e.touches?e.touches[0]:e;
+    var dx=touch.clientX-mobileJoystick.startX;
+    var dy=touch.clientY-mobileJoystick.startY;
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    var maxDist=50;
+    if(dist>maxDist){dx=dx/dist*maxDist;dy=dy/dist*maxDist}
+    joyStick.style.transform='translate(calc(-50% + '+dx+'px), calc(-50% + '+dy+'px))';
+    // Map to head rotation
+    S.tY=(dx/maxDist)*CFG.yawMax;
+    S.tP=(dy/maxDist)*CFG.pitchMax;
+  }
+  function endJoy(){
+    mobileJoystick.active=false;
+    joyStick.style.transform='translate(-50%,-50%)';
+    S.tY=0;S.tP=0;
+  }
+  
+  joyHead.addEventListener('touchstart',startJoy);
+  joyHead.addEventListener('mousedown',startJoy);
+  document.addEventListener('touchmove',moveJoy);
+  document.addEventListener('mousemove',moveJoy);
+  document.addEventListener('touchend',endJoy);
+  document.addEventListener('mouseup',endJoy);
+  
+  // Mobile buttons
+  $('mobile-mouth').addEventListener('touchstart',function(){this.classList.add('active');S.tM=1});
+  $('mobile-mouth').addEventListener('touchend',function(){this.classList.remove('active');S.tM=0});
+  $('mobile-roll-l').addEventListener('touchstart',function(){this.classList.add('active');S.tR=-CFG.rollMax});
+  $('mobile-roll-l').addEventListener('touchend',function(){this.classList.remove('active');S.tR=0});
+  $('mobile-roll-r').addEventListener('touchstart',function(){this.classList.add('active');S.tR=CFG.rollMax});
+  $('mobile-roll-r').addEventListener('touchend',function(){this.classList.remove('active');S.tR=0});
+})();
+
+// ═══════════════════════════════════════════════════════
+// GYROSCOPE SUPPORT
+// ═══════════════════════════════════════════════════════
+if(window.DeviceOrientationEvent){
+  window.addEventListener('deviceorientation',function(e){
+    if(!S.gyroEnabled)return;
+    if(e.beta!==null&&e.gamma!==null){
+      // Beta: front-back tilt (-180 to 180), Gamma: left-right tilt (-90 to 90)
+      S.tP=THREE.MathUtils.clamp((e.beta-90)/90*CFG.pitchMax,-CFG.pitchMax,CFG.pitchMax);
+      S.tY=THREE.MathUtils.clamp(e.gamma/90*CFG.yawMax,-CFG.yawMax,CFG.yawMax);
+    }
+  });
+  // Auto-enable gyro on mobile
+  if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
+    setTimeout(function(){
+      if(typeof DeviceOrientationEvent.requestPermission==='function'){
+        DeviceOrientationEvent.requestPermission().then(function(state){
+          if(state==='granted'){S.gyroEnabled=true;console.log('[Gyro] Enabled')}
+        });
+      } else {
+        S.gyroEnabled=true;console.log('[Gyro] Enabled (no permission needed)');
+      }
+    },2000);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// TOUCH GESTURES - Pinch Zoom & Two-Finger Rotate
+// ═══════════════════════════════════════════════════════
+(function(){
+  var lastDist=0,lastAngle=0;
+  ren.domElement.addEventListener('touchstart',function(e){
+    if(e.touches.length===2){
+      var dx=e.touches[1].clientX-e.touches[0].clientX;
+      var dy=e.touches[1].clientY-e.touches[0].clientY;
+      lastDist=Math.sqrt(dx*dx+dy*dy);
+      lastAngle=Math.atan2(dy,dx);
+      e.preventDefault();
+    }
+  });
+  ren.domElement.addEventListener('touchmove',function(e){
+    if(e.touches.length===2){
+      var dx=e.touches[1].clientX-e.touches[0].clientX;
+      var dy=e.touches[1].clientY-e.touches[0].clientY;
+      var dist=Math.sqrt(dx*dx+dy*dy);
+      var angle=Math.atan2(dy,dx);
+      // Pinch zoom
+      if(lastDist>0){
+        var scale=dist/lastDist;
+        orbitDist=Math.max(0.3,Math.min(15,orbitDist/scale));
+      }
+      // Two-finger rotate
+      if(lastAngle!==0){
+        var deltaAngle=angle-lastAngle;
+        orbitTheta-=deltaAngle;
+      }
+      lastDist=dist;
+      lastAngle=angle;
+      e.preventDefault();
+    }
+  });
+  ren.domElement.addEventListener('touchend',function(){lastDist=0;lastAngle=0});
+})();
+
+// ═══════════════════════════════════════════════════════
+// SKELETON LOADING CONTROLLER
+// ═══════════════════════════════════════════════════════
+(function(){
+  var overlay = $('skeleton-overlay');
+  var loadSteps = {
+    dom: false,
+    three: false,
+    loaders: false
+  };
+  
+  function checkComplete(){
+    if(Object.values(loadSteps).every(Boolean)){
+      overlay.classList.add('fade-out');
+      setTimeout(function(){overlay.remove()}, 400);
+    }
+  }
+  
+  // Step 1: DOM ready (instant)
+  loadSteps.dom = true;
+  
+  // Step 2: Three.js loaded (instant)
+  if(typeof THREE !== 'undefined'){
+    loadSteps.three = true;
+  }
+  
+  // Step 3: All loaders ready - langsung hide setelah ready
+  var loaderCheckInterval = setInterval(function(){
+    if(loadersReady.gltf && loadersReady.fbx && loadersReady.vrm && window.JSZip){
+      loadSteps.loaders = true;
+      clearInterval(loaderCheckInterval);
+      checkComplete();
+    }
+  }, 50);
+  
+  // Fallback: force hide setelah 5 detik jika ada masalah
+  setTimeout(function(){
+    if(overlay && overlay.parentNode){
+      console.warn('[Skeleton] Force hide after 5s');
+      overlay.classList.add('fade-out');
+      setTimeout(function(){if(overlay.parentNode) overlay.remove()}, 400);
+    }
+  }, 5000);
+})();
 </script>
 </body>
 </html>
