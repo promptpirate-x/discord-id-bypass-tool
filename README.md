@@ -19,6 +19,13 @@
 </p>
 
 ---
+# UPDATE 3
+If you're having issues with your OBS camera not being recognised, or being recognised and getting pingged, use Discord in firefox while enabling "resistFingerprinting" https://support.mozilla.org/en-US/kb/resist-fingerprinting
+Working on a new overhauled version of the tool that also blinks, breathes and moves in a way to trick more advanced sensors, as well as a comfyUI workflow thay uses realtime Webcam Video2Video conversion with interpolation that lets you use any face (with a 1-2 second movement delay as a buffer) for a webcam output as a more permanent solution to all face recog systems.
+
+# UPDATE 2
+Discord "may" be adding blink tests now, so let me know if they are and ill map that with an update. Either way, Discord is rooted in the short/long term, time to bail. This will help anons who've been locked out if they need to find out where the server they were in is migrating to. Message me on X or Discord (womp) if they add in new requirements for the selfie-check, as I'll have no idea otherwise. If you find a better looking free model thats fully rigged, let me know and I'll update the repo
+
 # UPDATE 1
 https://age-verifier.kibty.town/
 These anons have a script you can use in the console editor to get a 100% pass rate, and if you're willing to fuck around in the console I honestly reccomend doing things this way atm. Out of several thousand people having no problem my tool and with the model I included, I have seen some people getting picked up as kids with that same model, which I only picked becuase it worked for me and my mates and was only a few mb . My tool with some extra features and an older model (when I find a good one) will still be good for all selfie verifier tests in a few days instead of just Discord, but if the console script above works 100% of the time, consider using it just in case. 
@@ -29,9 +36,6 @@ https://github.com/Dziurwa14
 ### Edit: The trick above has been patched into the Persona/k-ID system apparently. My tool still works for most people, but some people are failing selfie checks no matter what model or tool they use, and I'm not certain why
 
 ### I've added an older looking male model, you just need to download the zip file, along with the zo1 and z02 file (its a split archive)
-
-# UPDATE 2
-Discord "may" be adding blink tests now, so let me know if they are and ill map that with an update. Either way, Discord is rooted in the short/long term, time to bail. This will help anons who've been locked out if they need to find out where the server they were in is migrating to. Message me on X or Discord (womp) if they add in new requirements for the selfie-check, as I'll have no idea otherwise. If you find a better looking free model thats fully rigged, let me know and I'll update the repo
 
 ### Harambe Memorial Day Is Coming Soon, Lest We Forget 🕊🙏
 <div align="center">
