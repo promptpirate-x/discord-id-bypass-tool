@@ -26,8 +26,9 @@
   .model-panel::-webkit-scrollbar{width:5px}.model-panel::-webkit-scrollbar-track{background:transparent}.model-panel::-webkit-scrollbar-thumb{background:rgba(100,220,255,0.2);border-radius:3px}
   .controls-panel{bottom:180px;left:20px;max-width:320px}
   .values-panel{bottom:20px;left:20px;min-width:220px;max-width:320px}
-  .kid-panel{top:60px;left:20px;max-width:360px;max-height:calc(100vh - 200px);overflow-y:auto}
+  .kid-panel{top:60px;left:20px;max-width:360px;max-height:20vh;overflow-y:auto}
   .kid-panel::-webkit-scrollbar{width:5px}.kid-panel::-webkit-scrollbar-track{background:transparent}.kid-panel::-webkit-scrollbar-thumb{background:rgba(100,220,255,0.2);border-radius:3px}
+  .lighting-panel{top:250px;left:20px;max-width:320px}
   @media(max-width:768px){
     .hp{font-size:10px;padding:10px 12px;max-width:calc(100vw - 20px)}
     .hp.collapsed>*:not(.ht){display:none!important}
@@ -155,6 +156,18 @@
   .phoneme-toggle{position:absolute;top:20px;right:380px;background:rgba(10,10,20,0.85);backdrop-filter:blur(12px);border:1px solid rgba(100,220,255,0.15);border-radius:6px;padding:6px 14px;color:#a78bfa;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;pointer-events:auto;z-index:20}
   .phoneme-toggle:hover{background:rgba(167,139,250,0.15)}
   @media(max-width:768px){.phoneme-toggle{top:10px;right:10px}}
+
+  /* ═══════════════════════════════════════════════════════
+     LIGHTING CONTROLS
+     ═══════════════════════════════════════════════════════ */
+  .light-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:11px}
+  .light-label{min-width:60px;font-weight:600}
+  .light-slider{flex:1;accent-color:#64dcff;height:4px}
+  .light-value{min-width:35px;text-align:right;color:#64dcff;font-weight:600;font-size:10px}
+  .light-color{width:20px;height:20px;border-radius:4px;border:1px solid rgba(100,220,255,0.3);cursor:pointer}
+  .light-toggle{background:rgba(100,220,255,0.1);border:1px solid rgba(100,220,255,0.3);color:#64dcff;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:9px;font-family:'JetBrains Mono',monospace}
+  .light-toggle:hover{background:rgba(100,220,255,0.2)}
+  .light-toggle.active{background:rgba(74,222,128,0.2);border-color:#4ade80;color:#4ade80}
 
   /* ═══════════════════════════════════════════════════════
      SKELETON LOADING
@@ -311,6 +324,50 @@
       </div>
     </div>
 
+    <div class="hp lighting-panel">
+      <div class="ht">Lighting<span class="ht-toggle">−</span></div>
+      <div class="light-row">
+        <span class="light-label">Key Light</span>
+        <button class="light-toggle active" id="key-toggle">ON</button>
+        <input type="color" class="light-color" id="key-color" value="#dce8ff" />
+      </div>
+      <div class="light-row">
+        <span class="light-label" style="min-width:80px">Intensity</span>
+        <input type="range" class="light-slider" id="key-intensity" min="0" max="3" step="0.1" value="1.4" />
+        <span class="light-value" id="key-val">1.4</span>
+      </div>
+      <div class="light-row">
+        <span class="light-label">Fill Light</span>
+        <button class="light-toggle active" id="fill-toggle">ON</button>
+        <input type="color" class="light-color" id="fill-color" value="#64dcff" />
+      </div>
+      <div class="light-row">
+        <span class="light-label" style="min-width:80px">Intensity</span>
+        <input type="range" class="light-slider" id="fill-intensity" min="0" max="2" step="0.1" value="0.4" />
+        <span class="light-value" id="fill-val">0.4</span>
+      </div>
+      <div class="light-row">
+        <span class="light-label">Rim Light</span>
+        <button class="light-toggle active" id="rim-toggle">ON</button>
+        <input type="color" class="light-color" id="rim-color" value="#a78bfa" />
+      </div>
+      <div class="light-row">
+        <span class="light-label" style="min-width:80px">Intensity</span>
+        <input type="range" class="light-slider" id="rim-intensity" min="0" max="2" step="0.1" value="0.5" />
+        <span class="light-value" id="rim-val">0.5</span>
+      </div>
+      <div class="light-row">
+        <span class="light-label">Ambient</span>
+        <button class="light-toggle active" id="ambient-toggle">ON</button>
+        <input type="color" class="light-color" id="ambient-color" value="#506080" />
+      </div>
+      <div class="light-row">
+        <span class="light-label" style="min-width:80px">Intensity</span>
+        <input type="range" class="light-slider" id="ambient-intensity" min="0" max="2" step="0.1" value="0.8" />
+        <span class="light-value" id="ambient-val">0.8</span>
+      </div>
+    </div>
+
     <div class="hp model-panel" id="model-panel">
       <div class="ht">Model<span class="ht-toggle">−</span></div>
       <button class="lbtn" id="load-btn">Load Model File</button>
@@ -459,6 +516,7 @@ var kl=new THREE.DirectionalLight(0xdce8ff,1.4);kl.position.set(3,4,5);kl.castSh
 var fl=new THREE.DirectionalLight(0x64dcff,0.4);fl.position.set(-3,2,2);scene.add(fl);
 var rl=new THREE.DirectionalLight(0xa78bfa,0.5);rl.position.set(0,2,-4);scene.add(rl);
 scene.add(new THREE.PointLight(0x64dcff,0.3,10).translateY(-2).translateZ(2));
+var ambientLight=scene.children.find(function(c){return c.isAmbientLight});
 var gnd=new THREE.Mesh(new THREE.PlaneGeometry(30,30),new THREE.MeshStandardMaterial({color:0x0a0a12,roughness:0.95}));
 gnd.rotation.x=-Math.PI/2;gnd.position.y=-3;gnd.receiveShadow=true;scene.add(gnd);
 
@@ -1405,6 +1463,50 @@ $('kid-test').onclick=function(){
 };
 
 console.log('[HC] Initialized. Three.js r'+THREE.REVISION);
+
+// ═══════════════════════════════════════════════════════
+// LIGHTING CONTROLS
+// ═══════════════════════════════════════════════════════
+(function(){
+  function updateLightColor(light,colorHex){light.color.setStyle(colorHex)}
+  function updateLightIntensity(light,val){light.intensity=parseFloat(val)}
+  
+  // Key Light
+  $('key-intensity').oninput=function(){updateLightIntensity(kl,this.value);$('key-val').textContent=this.value};
+  $('key-color').oninput=function(){updateLightColor(kl,this.value)};
+  $('key-toggle').onclick=function(){
+    kl.visible=!kl.visible;
+    this.classList.toggle('active');
+    this.textContent=kl.visible?'ON':'OFF';
+  };
+  
+  // Fill Light
+  $('fill-intensity').oninput=function(){updateLightIntensity(fl,this.value);$('fill-val').textContent=this.value};
+  $('fill-color').oninput=function(){updateLightColor(fl,this.value)};
+  $('fill-toggle').onclick=function(){
+    fl.visible=!fl.visible;
+    this.classList.toggle('active');
+    this.textContent=fl.visible?'ON':'OFF';
+  };
+  
+  // Rim Light
+  $('rim-intensity').oninput=function(){updateLightIntensity(rl,this.value);$('rim-val').textContent=this.value};
+  $('rim-color').oninput=function(){updateLightColor(rl,this.value)};
+  $('rim-toggle').onclick=function(){
+    rl.visible=!rl.visible;
+    this.classList.toggle('active');
+    this.textContent=rl.visible?'ON':'OFF';
+  };
+  
+  // Ambient Light
+  $('ambient-intensity').oninput=function(){updateLightIntensity(ambientLight,this.value);$('ambient-val').textContent=this.value};
+  $('ambient-color').oninput=function(){updateLightColor(ambientLight,this.value)};
+  $('ambient-toggle').onclick=function(){
+    ambientLight.visible=!ambientLight.visible;
+    this.classList.toggle('active');
+    this.textContent=ambientLight.visible?'ON':'OFF';
+  };
+})();
 
 // ═══════════════════════════════════════════════════════
 // QUICK START TUTORIAL
