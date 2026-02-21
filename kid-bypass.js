@@ -1,256 +1,152 @@
 // ═══════════════════════════════════════════════════════
-// k-ID Bypass — by kibty.town & Dziurwa14 & TheUnrealZaka
-// Modified by: Sofinco
-// Enhanced: Natural behavior simulation
+// k-ID Bypass — Working Implementation
+// Based on: kibty.town & Dziurwa14
+// Full verification via QR code scanning
 // ═══════════════════════════════════════════════════════
 
 var KIDBypass = (function(){
   'use strict';
 
-  function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min}
-  function randomFloat(min,max){return Math.random()*(max-min)+min}
-  function gaussianRandom(mean,std){var u=1-Math.random(),v=Math.random();return mean+std*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+  var API_ENDPOINT = 'https://age-verifier.kibty.town/api/verify';
+  var verificationInProgress = false;
+  var useStandaloneMode = false; // Toggle between API and Standalone
 
-  // ─── HKDF-SHA256 Key Derivation ───
-  async function deriveKey(nonce, timestamp, transactionId){
-    var ikm = new TextEncoder().encode(nonce + timestamp + transactionId);
-    var salt = new Uint8Array(32);
-    var key = await crypto.subtle.importKey('raw', ikm, {name: 'HKDF'}, false, ['deriveBits']);
-    var bits = await crypto.subtle.deriveBits(
-      {name: 'HKDF', hash: 'SHA-256', salt: salt, info: new Uint8Array()},
-      key, 256
-    );
-    return new Uint8Array(bits);
-  }
-
-  // ─── AES-GCM Encryption ───
-  async function encryptPayload(payload, nonce, timestamp, transactionId){
-    var key = await deriveKey(nonce, timestamp, transactionId);
-    var iv = crypto.getRandomValues(new Uint8Array(12));
-    var cryptoKey = await crypto.subtle.importKey('raw', key, {name: 'AES-GCM'}, false, ['encrypt']);
-    var encrypted = await crypto.subtle.encrypt(
-      {name: 'AES-GCM', iv: iv, tagLength: 128},
-      cryptoKey,
-      new TextEncoder().encode(JSON.stringify(payload))
-    );
-    var ciphertext = new Uint8Array(encrypted.slice(0, -16));
-    var authTag = new Uint8Array(encrypted.slice(-16));
-    return {
-      encrypted_payload: btoa(String.fromCharCode(...ciphertext)),
-      auth_tag: btoa(String.fromCharCode(...authTag)),
-      iv: btoa(String.fromCharCode(...iv)),
-      timestamp: timestamp
-    };
-  }
-
-  // ─── Z-Score Filter ───
-  function zFilter(arr, threshold){
-    if(arr.length < 2) return arr;
-    var mean = arr.reduce((a,b)=>a+b,0) / arr.length;
-    var std = Math.sqrt(arr.reduce((a,b)=>a+Math.pow(b-mean,2),0) / arr.length);
-    if(std === 0) return arr;
-    return arr.filter(x => Math.abs((x - mean) / std) <= threshold);
-  }
-
-  // ─── Age Predictions (Natural variance) ───
-  function generatePredictions(targetAge){
-    var raws = [];
-    var baseAge = targetAge + gaussianRandom(0, 1.5);
-    for(var i = 0; i < randomInt(10, 14); i++){
-      var noise = gaussianRandom(0, 2.5);
-      var drift = Math.sin(i * 0.5) * 1.2;
-      raws.push(Math.max(18, Math.min(99, baseAge + noise + drift)));
+  // ─── QR Code Scanner (jsQR integration) ───
+  async function decodeQRFromImage(file){
+    if(typeof jsQR === 'undefined'){
+      throw new Error('QR scanner library not loaded');
     }
-    var outputs = zFilter(raws, 2.0);
-    var primary = zFilter(outputs, 2.0);
-    var final = zFilter(primary, 2.0);
     
-    return {
-      raws: raws,
-      outputs: outputs,
-      primaryOutputs: primary,
-      finalOutputs: final,
-      xScaledShiftAmt: [0.02, -0.02][Math.random() < 0.5 ? 0 : 1],
-      yScaledShiftAmt: [0.015, -0.015][Math.random() < 0.5 ? 0 : 1]
-    };
-  }
-
-  // ─── Timeline Generation (Natural timing) ───
-  function generateTimeline(maxTime){
-    var entries = [];
-    var lastTime = randomInt(1200, 2800);
-    var numEvents = randomInt(2, 4);
-    for(var i = 0; i < numEvents; i++){
-      var duration = randomInt(400, 1200);
-      var end = lastTime + duration;
-      if(end < maxTime){
-        entries.push([lastTime, end]);
-        var gap = randomInt(1200, 2500) + Math.floor(gaussianRandom(0, 300));
-        lastTime = end + Math.max(800, gap);
-      }
-    }
-    return entries;
-  }
-
-  // ─── State Completion Times ───
-  function calculateStateCompletionTimes(stateTimelines){
-    var times = {};
-    for(var key in stateTimelines){
-      var timeline = stateTimelines[key];
-      if(timeline.length < 1) continue;
-      var totalDuration = 0;
-      for(var i = 0; i < timeline.length; i++){
-        totalDuration += timeline[i][1] - timeline[i][0];
-      }
-      times[key] = totalDuration;
-    }
-    return times;
-  }
-
-  // ─── Mouth Tracking (Natural behavior) ───
-  function generateOpennessData(){
-    var streak = [], speeds = [], failedReadings = [], failedSpeeds = [], failedIntervals = [];
-    var lastTimestamp = Date.now() - randomInt(4500, 5500), isOpen = false, openStart = 0;
-    var numEvents = randomInt(6, 10);
-    
-    for(var i = 0; i < numEvents; i++){
-      var delay = randomInt(250, 550) + Math.floor(gaussianRandom(0, 100));
-      var timestamp = lastTimestamp + delay;
-      var threshold = 0.55 + gaussianRandom(0, 0.1);
-      var value = Math.random();
+    try {
+      // Modern approach using createImageBitmap (same as k-id-age-verifier)
+      var bitmap = await createImageBitmap(file);
+      var canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(bitmap, 0, 0);
+      var imageData = ctx.getImageData(0, 0, bitmap.width, bitmap.height);
+      var result = jsQR(imageData.data, imageData.width, imageData.height);
       
-      if(value > threshold && !isOpen){
-        isOpen = true; openStart = timestamp;
-        streak.push({start: timestamp, duration: 0});
-      } else if(value < (threshold - 0.2) && isOpen){
-        isOpen = false;
-        var duration = timestamp - openStart;
-        if(duration > 100){
-          streak[streak.length - 1].duration = duration;
-          speeds.push(duration > 0 ? 1000 / duration : 0);
-        } else {
-          streak.pop();
-        }
+      if(result){
+        return result.data;
+      } else {
+        throw new Error('No QR code found in image');
       }
-      
-      if(value < 0.35){
-        failedReadings.push({timestamp: timestamp, reason: 'insufficient_openness'});
-        if(failedReadings.length > 1){
-          var interval = timestamp - failedReadings[failedReadings.length - 2].timestamp;
-          failedIntervals.push(interval);
-          failedSpeeds.push(interval > 0 ? 1000 / interval : 0);
-        }
-      }
-      lastTimestamp = timestamp;
-    }
-    
-    return {
-      recordedOpennessStreak: streak,
-      recordedSpeeds: speeds,
-      failedOpennessReadings: failedReadings,
-      failedOpennessSpeeds: failedSpeeds,
-      failedOpennessIntervals: failedIntervals
-    };
-  }
-
-  // ─── Device List (Natural variation) ───
-  function generateDevices(){
-    var cameraPool = [
-      'HD Webcam', 'Integrated Camera', 'USB Camera', 'FaceTime HD Camera',
-      'Logitech Webcam', 'HP TrueVision HD', 'Lenovo EasyCamera', 'Dell Webcam'
-    ];
-    var numDevices = randomInt(2, 4);
-    var cameras = [];
-    var usedNames = new Set();
-    
-    for(var i = 0; i < numDevices; i++){
-      var name = cameraPool[randomInt(0, cameraPool.length - 1)];
-      while(usedNames.has(name)){
-        name = cameraPool[randomInt(0, cameraPool.length - 1)];
-      }
-      usedNames.add(name);
-      cameras.push(name);
-    }
-    
-    var selected = cameras[randomInt(0, cameras.length - 1)];
-    return {
-      devices: cameras.map(function(label, i){
-        return {
-          deviceId: 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 9),
-          label: label,
-          kind: 'videoinput'
+    } catch(err) {
+      // Fallback for older browsers
+      return new Promise(function(resolve, reject){
+        var reader = new FileReader();
+        reader.onload = function(e){
+          var img = new Image();
+          img.onload = function(){
+            var canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            var result = jsQR(imageData.data, imageData.width, imageData.height);
+            if(result){
+              resolve(result.data);
+            } else {
+              reject(new Error('No QR code found in image'));
+            }
+          };
+          img.onerror = function(){reject(new Error('Failed to load image'))};
+          img.src = e.target.result;
         };
-      }),
-      selectedCamera: selected
-    };
+        reader.onerror = function(){reject(new Error('Failed to read file'))};
+        reader.readAsDataURL(file);
+      });
+    }
   }
 
-  // ─── Main Payload Generator (Natural timing) ───
-  function generatePayload(targetAge){
-    var currentTime = Date.now() / 1000;
-    var initialAdjustmentTime = randomInt(250, 750) + Math.floor(gaussianRandom(0, 100));
-    var completionTime = randomInt(9000, 14000) + Math.floor(gaussianRandom(0, 1500));
+  // ─── Verify via API or Standalone ───
+  async function verifyWithQRCode(qrCodeUrl, onProgress){
+    if(verificationInProgress){
+      throw new Error('Verification already in progress');
+    }
     
-    var nonce = Math.random().toString(36).substr(2, 16) + Math.random().toString(36).substr(2, 4);
-    var timestamp = Date.now();
-    var transactionId = 'txn_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 12);
+    verificationInProgress = true;
     
-    var predictions = generatePredictions(targetAge);
-    var mouthTracking = generateOpennessData();
-    var deviceInfo = generateDevices();
-    
-    var stateTimelines = {
-      init: generateTimeline(completionTime),
-      camera_ready: generateTimeline(completionTime),
-      face_detected: generateTimeline(completionTime),
-      mouth_tracking: generateTimeline(completionTime),
-      predictions_start: generateTimeline(completionTime)
-    };
-    
-    var stateCompletionTimes = calculateStateCompletionTimes(stateTimelines);
-    
-    var jitter = gaussianRandom(0, 500);
-    var startOffset = completionTime + initialAdjustmentTime + randomInt(2200, 4800) + jitter;
-    
-    return {
-      nonce: nonce,
-      timestamp: timestamp,
-      transactionId: transactionId,
-      predictions: predictions,
-      mouthTracking: mouthTracking,
-      stateTimelines: stateTimelines,
-      stateCompletionTimes: stateCompletionTimes,
-      devices: deviceInfo.devices,
-      selectedCamera: deviceInfo.selectedCamera,
-      metadata: {
-        sdk_path: './face-capture-v1.10.22.js',
-        model_version: 'v.2025.0',
-        cropper_version: 'v.0.0.3',
-        start_time_stamp: currentTime - startOffset / 1000,
-        end_time_stamp: currentTime + randomFloat(0.15, 0.45),
-        txMode: 'experiment',
-        timestamp: Date.now() - startOffset,
-        isCameraPermissionGranted: true,
-        completionTime: completionTime,
-        deferredComputationStartedAt: currentTime - randomFloat(0.6, 1.8),
-        instructionCompletionTime: completionTime + initialAdjustmentTime + randomInt(80, 180),
-        initialAdjustmentTime: initialAdjustmentTime,
-        completionState: 'COMPLETE'
+    try{
+      if(useStandaloneMode){
+        // Use standalone full implementation
+        if(typeof KIDBypassStandalone === 'undefined'){
+          throw new Error('Standalone mode not loaded. Please refresh the page.');
+        }
+        var result = await KIDBypassStandalone.verify(qrCodeUrl, onProgress);
+        verificationInProgress = false;
+        return result;
+      } else {
+        // Use API endpoint
+        var response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: 'qr_link',
+            identifier: qrCodeUrl
+          })
+        });
+        
+        if(!response.ok){
+          var errorText = await response.text();
+          throw new Error('Verification failed: ' + errorText);
+        }
+        
+        var result = await response.json();
+        verificationInProgress = false;
+        return result;
       }
-    };
+    } catch(err){
+      verificationInProgress = false;
+      throw err;
+    }
   }
 
   // ─── Public API ───
   return {
-    intercept: async function(targetAge){
-      targetAge = targetAge || 25;
-      var payload = generatePayload(targetAge);
-      var encrypted = await encryptPayload(payload, payload.nonce, payload.timestamp, payload.transactionId);
-      return {encrypted: encrypted, raw: payload};
+    // Verify using QR code URL
+    verify: async function(qrCodeUrl, onProgress){
+      if(!qrCodeUrl || typeof qrCodeUrl !== 'string'){
+        throw new Error('Invalid QR code URL');
+      }
+      return await verifyWithQRCode(qrCodeUrl, onProgress);
     },
-    test: function(targetAge){
-      targetAge = targetAge || 25;
-      return generatePayload(targetAge);
+    
+    // Verify using QR code image file
+    verifyFromImage: async function(imageFile){
+      if(!imageFile || !(imageFile instanceof File)){
+        throw new Error('Invalid image file');
+      }
+      var qrCodeUrl = await decodeQRFromImage(imageFile);
+      return await verifyWithQRCode(qrCodeUrl);
+    },
+    
+    // Check if verification is in progress
+    isVerifying: function(){
+      return verificationInProgress;
+    },
+    
+    // Get API endpoint (for debugging)
+    getEndpoint: function(){
+      return API_ENDPOINT;
+    },
+    
+    // Set verification mode
+    setMode: function(mode){
+      if(mode === 'standalone'){
+        useStandaloneMode = true;
+      } else if(mode === 'api'){
+        useStandaloneMode = false;
+      }
+      return useStandaloneMode ? 'standalone' : 'api';
+    },
+    
+    // Get current mode
+    getMode: function(){
+      return useStandaloneMode ? 'standalone' : 'api';
     }
   };
 })();

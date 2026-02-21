@@ -19,6 +19,33 @@
 </p>
 
 ---
+# UPDATE 4 - K-ID BYPASS NOW WORKING WITH DUAL MODE!
+The K-ID Bypass feature now has **TWO verification modes**:
+
+**🚀 API Mode (Default)** - Fast verification using kibty.town API
+- ✅ Quick (2-3 seconds)
+- ⚠️ May be patched by k-ID
+- Uses external service
+
+**🔒 Standalone Mode** - Direct verification without external dependencies
+- ✅ 100% reliable (no external API)
+- ✅ Works even if kibty.town is down
+- ⏱️ Slower (5-10 seconds)
+- Runs entirely in your browser
+
+**How to use:**
+1. Start Discord age verification and choose "Face Scan" option
+2. When Discord shows a QR code, either:
+   - Copy the QR code URL and paste it in the K-ID Bypass panel
+   - Upload/drag the QR code image directly
+3. **Choose your mode:** Click "API Mode" or "Standalone" button
+4. Click "✓ Verify Account"
+5. Wait for confirmation, then return to Discord
+
+**If API Mode fails, try Standalone Mode!**
+
+---
+
 # UPDATE 3
 If you're having issues with your OBS camera not being recognised, or being recognised and getting pingged, use Discord in firefox while enabling "resistFingerprinting" https://support.mozilla.org/en-US/kb/resist-fingerprinting
 Working on a new overhauled version of the tool that also blinks, breathes and moves in a way to trick more advanced sensors, as well as a comfyUI workflow thay uses realtime Webcam Video2Video conversion with interpolation that lets you use any face (with a 1-2 second movement delay as a buffer) for a webcam output as a more permanent solution to all face recog systems.
