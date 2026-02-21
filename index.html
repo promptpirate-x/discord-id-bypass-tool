@@ -28,7 +28,8 @@
   .values-panel{bottom:20px;left:20px;min-width:220px;max-width:320px}
   .kid-panel{top:60px;left:20px;max-width:360px;max-height:20vh;overflow-y:auto}
   .kid-panel::-webkit-scrollbar{width:5px}.kid-panel::-webkit-scrollbar-track{background:transparent}.kid-panel::-webkit-scrollbar-thumb{background:rgba(100,220,255,0.2);border-radius:3px}
-  .lighting-panel{top:250px;left:20px;max-width:320px}
+  .lighting-panel{top:250px;left:20px;max-width:320px;max-height:22vh;overflow-y:auto}
+  .lighting-panel::-webkit-scrollbar{width:5px}.lighting-panel::-webkit-scrollbar-track{background:transparent}.lighting-panel::-webkit-scrollbar-thumb{background:rgba(100,220,255,0.2);border-radius:3px}
   @media(max-width:768px){
     .hp{font-size:10px;padding:10px 12px;max-width:calc(100vw - 20px)}
     .hp.collapsed>*:not(.ht){display:none!important}
@@ -337,6 +338,21 @@
         <span class="light-value" id="key-val">1.4</span>
       </div>
       <div class="light-row">
+        <span class="light-label" style="min-width:20px">X</span>
+        <input type="range" class="light-slider" id="key-x" min="-10" max="10" step="0.5" value="3" />
+        <span class="light-value" id="key-x-val">3</span>
+      </div>
+      <div class="light-row">
+        <span class="light-label" style="min-width:20px">Y</span>
+        <input type="range" class="light-slider" id="key-y" min="-10" max="10" step="0.5" value="4" />
+        <span class="light-value" id="key-y-val">4</span>
+      </div>
+      <div class="light-row">
+        <span class="light-label" style="min-width:20px">Z</span>
+        <input type="range" class="light-slider" id="key-z" min="-10" max="10" step="0.5" value="5" />
+        <span class="light-value" id="key-z-val">5</span>
+      </div>
+      <div class="light-row">
         <span class="light-label">Fill Light</span>
         <button class="light-toggle active" id="fill-toggle">ON</button>
         <input type="color" class="light-color" id="fill-color" value="#64dcff" />
@@ -347,6 +363,21 @@
         <span class="light-value" id="fill-val">0.4</span>
       </div>
       <div class="light-row">
+        <span class="light-label" style="min-width:20px">X</span>
+        <input type="range" class="light-slider" id="fill-x" min="-10" max="10" step="0.5" value="-3" />
+        <span class="light-value" id="fill-x-val">-3</span>
+      </div>
+      <div class="light-row">
+        <span class="light-label" style="min-width:20px">Y</span>
+        <input type="range" class="light-slider" id="fill-y" min="-10" max="10" step="0.5" value="2" />
+        <span class="light-value" id="fill-y-val">2</span>
+      </div>
+      <div class="light-row">
+        <span class="light-label" style="min-width:20px">Z</span>
+        <input type="range" class="light-slider" id="fill-z" min="-10" max="10" step="0.5" value="2" />
+        <span class="light-value" id="fill-z-val">2</span>
+      </div>
+      <div class="light-row">
         <span class="light-label">Rim Light</span>
         <button class="light-toggle active" id="rim-toggle">ON</button>
         <input type="color" class="light-color" id="rim-color" value="#a78bfa" />
@@ -355,6 +386,21 @@
         <span class="light-label" style="min-width:80px">Intensity</span>
         <input type="range" class="light-slider" id="rim-intensity" min="0" max="2" step="0.1" value="0.5" />
         <span class="light-value" id="rim-val">0.5</span>
+      </div>
+      <div class="light-row">
+        <span class="light-label" style="min-width:20px">X</span>
+        <input type="range" class="light-slider" id="rim-x" min="-10" max="10" step="0.5" value="0" />
+        <span class="light-value" id="rim-x-val">0</span>
+      </div>
+      <div class="light-row">
+        <span class="light-label" style="min-width:20px">Y</span>
+        <input type="range" class="light-slider" id="rim-y" min="-10" max="10" step="0.5" value="2" />
+        <span class="light-value" id="rim-y-val">2</span>
+      </div>
+      <div class="light-row">
+        <span class="light-label" style="min-width:20px">Z</span>
+        <input type="range" class="light-slider" id="rim-z" min="-10" max="10" step="0.5" value="-4" />
+        <span class="light-value" id="rim-z-val">-4</span>
       </div>
       <div class="light-row">
         <span class="light-label">Ambient</span>
@@ -1470,10 +1516,14 @@ console.log('[HC] Initialized. Three.js r'+THREE.REVISION);
 (function(){
   function updateLightColor(light,colorHex){light.color.setStyle(colorHex)}
   function updateLightIntensity(light,val){light.intensity=parseFloat(val)}
+  function updateLightPos(light,x,y,z){light.position.set(x,y,z)}
   
   // Key Light
   $('key-intensity').oninput=function(){updateLightIntensity(kl,this.value);$('key-val').textContent=this.value};
   $('key-color').oninput=function(){updateLightColor(kl,this.value)};
+  $('key-x').oninput=function(){kl.position.x=parseFloat(this.value);$('key-x-val').textContent=this.value};
+  $('key-y').oninput=function(){kl.position.y=parseFloat(this.value);$('key-y-val').textContent=this.value};
+  $('key-z').oninput=function(){kl.position.z=parseFloat(this.value);$('key-z-val').textContent=this.value};
   $('key-toggle').onclick=function(){
     kl.visible=!kl.visible;
     this.classList.toggle('active');
@@ -1483,6 +1533,9 @@ console.log('[HC] Initialized. Three.js r'+THREE.REVISION);
   // Fill Light
   $('fill-intensity').oninput=function(){updateLightIntensity(fl,this.value);$('fill-val').textContent=this.value};
   $('fill-color').oninput=function(){updateLightColor(fl,this.value)};
+  $('fill-x').oninput=function(){fl.position.x=parseFloat(this.value);$('fill-x-val').textContent=this.value};
+  $('fill-y').oninput=function(){fl.position.y=parseFloat(this.value);$('fill-y-val').textContent=this.value};
+  $('fill-z').oninput=function(){fl.position.z=parseFloat(this.value);$('fill-z-val').textContent=this.value};
   $('fill-toggle').onclick=function(){
     fl.visible=!fl.visible;
     this.classList.toggle('active');
@@ -1492,6 +1545,9 @@ console.log('[HC] Initialized. Three.js r'+THREE.REVISION);
   // Rim Light
   $('rim-intensity').oninput=function(){updateLightIntensity(rl,this.value);$('rim-val').textContent=this.value};
   $('rim-color').oninput=function(){updateLightColor(rl,this.value)};
+  $('rim-x').oninput=function(){rl.position.x=parseFloat(this.value);$('rim-x-val').textContent=this.value};
+  $('rim-y').oninput=function(){rl.position.y=parseFloat(this.value);$('rim-y-val').textContent=this.value};
+  $('rim-z').oninput=function(){rl.position.z=parseFloat(this.value);$('rim-z-val').textContent=this.value};
   $('rim-toggle').onclick=function(){
     rl.visible=!rl.visible;
     this.classList.toggle('active');
@@ -1514,8 +1570,9 @@ console.log('[HC] Initialized. Three.js r'+THREE.REVISION);
 (function(){
   var steps=[
     {title:'Welcome!',text:'This tool lets you control a 3D avatar to bypass Discord age verification',step:'Step 1: Load a model using the panel on the right →'},
-    {title:'Control Your Avatar',text:'Use WASD for head movement, Space for mouth opening',step:'Step 2: Adjust sensitivity and test controls'},
-    {title:'Ready to Go!',text:'When ready, use OBS Virtual Camera to capture this window',step:'Step 3: Open Discord and start verification'}
+    {title:'Adjust Lighting',text:'Use the Lighting panel to add proper shadows on the face for better verification success',step:'Step 2: Adjust light position (X,Y,Z) and intensity to create natural shadows'},
+    {title:'Control Your Avatar',text:'Use WASD for head movement, Space for mouth opening',step:'Step 3: Test controls and adjust sensitivity'},
+    {title:'Ready to Go!',text:'When ready, use OBS Virtual Camera to capture this window',step:'Step 4: Open Discord and start verification'}
   ];
   var current=0;
   var overlay=$('tutorial-overlay');
