@@ -98,7 +98,6 @@
   .hide-ui-btn{position:absolute;top:20px;right:20px;background:rgba(10,10,20,0.85);backdrop-filter:blur(12px);border:1px solid rgba(100,220,255,0.15);border-radius:6px;padding:6px 14px;color:#64dcff;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;pointer-events:auto;z-index:20}
   .hide-ui-btn:hover{background:rgba(100,220,255,0.15)}
   .hud.hidden .hp{display:none!important}
-  .hud.hidden .hide-ui-btn{display:block!important}
   .kid-input{background:rgba(10,10,20,0.9);border:1px solid rgba(100,220,255,0.2);color:#e0e0e8;padding:6px 10px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;width:100%;margin-top:4px}
   .kid-btn{background:rgba(100,220,255,0.1);border:1px solid rgba(100,220,255,0.3);color:#64dcff;padding:8px 16px;border-radius:6px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;width:100%;margin-top:8px}
   .kid-btn:hover{background:rgba(100,220,255,0.2)}
@@ -110,7 +109,6 @@
     .cr{font-size:9px;gap:6px}
     .ck{font-size:8px;padding:1px 5px}
   }
-  .hide-ui-elements{top:60px;left:20px}
   .hidden{display:none}
   
   /* ═══════════════════════════════════════════════════════
@@ -296,8 +294,8 @@
 </div>
 
 <div id="canvas-container" style="width:100vw;height:100vh;position:relative;">
+  <button class="hide-ui-btn" id="hide-ui-btn">Hide UI [H]</button>
   <div class="hud" id="hud">
-    <button class="hide-ui-btn" id="hide-ui-btn">Hide UI [H]</button>
     <button class="phoneme-toggle" id="phoneme-toggle">Phonemes [P]</button>
     <div class="main-title"><span>☠</span> Discord ID Bypass Tool <span style="font-size:11px;opacity:0.5;margin-left:6px">by PromptPirate</span></div>
 
@@ -306,11 +304,6 @@
       <div style="font-size:12px;color:#c0c0cc"><span class="sd off" id="gp-dot"></span><span id="gp-status">No Gamepad</span></div>
       <div class="sub" id="gp-hint">Press any button on controller</div>
       <div class="sub">Keyboard: Always Active</div>
-    </div>
-
-    <div class="hp always-visible hide-ui-elements">
-      <div class="ht">UI Element Visibility</div>
-      <button class="cb" id="ui-hide">Hide UI</button>
     </div>
 
     <div class="hp sensitivity-panel">
@@ -486,11 +479,36 @@
 
     <div class="hp kid-panel" id="kid-panel">
       <div class="ht">k-ID Bypass<span class="ht-toggle">−</span></div>
-      <div style="font-size:10px;color:#707080;margin-bottom:6px">Generate bypass payload for Discord age verification</div>
-      <label style="font-size:10px;color:#a0a0b0">Target Age:</label>
-      <input type="number" class="kid-input" id="kid-age" value="25" min="18" max="99" />
-      <button class="kid-btn" id="kid-generate">Generate Bypass Data</button>
-      <button class="kid-btn" id="kid-test" style="opacity:0.7;font-size:10px;padding:5px 10px;margin-top:4px">Test Mode (No Encryption)</button>
+      <div style="font-size:10px;color:#707080;margin-bottom:6px">Verify your Discord account as adult using QR code</div>
+      
+      <div style="font-size:9px;color:#5a5a6a;margin-bottom:8px;line-height:1.4">
+        1. Start Discord age verification<br>
+        2. Choose "Face Scan" option<br>
+        3. Scan/upload the QR code below
+      </div>
+      
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <button class="cb" id="mode-api" style="flex:1;font-size:9px;padding:4px;background:rgba(100,220,255,0.2);border-color:#64dcff">API Mode</button>
+        <button class="cb" id="mode-standalone" style="flex:1;font-size:9px;padding:4px">Standalone</button>
+      </div>
+      <div style="font-size:8px;color:#5a5a6a;margin-bottom:6px" id="mode-desc">Using kibty.town API (fast, may be patched)</div>
+      
+      <label style="font-size:10px;color:#a0a0b0">QR Code URL or Image:</label>
+      <input type="text" class="kid-input" id="kid-qr-url" placeholder="https://... or drop QR image" style="margin-bottom:4px" />
+      
+      <label class="kid-btn" style="cursor:pointer;text-align:center;margin-top:4px;opacity:0.8;font-size:10px;padding:6px">
+        📷 Upload QR Image
+        <input type="file" id="kid-qr-file" accept="image/*" style="display:none" />
+      </label>
+      
+      <button class="kid-btn" id="kid-verify" style="background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.3);color:#4ade80">
+        ✓ Verify Account
+      </button>
+      
+      <div style="font-size:9px;color:#5a5a6a;margin-top:8px;line-height:1.4">
+        Status: <span id="kid-status" style="color:#64dcff">Ready</span>
+      </div>
+      
       <div class="kid-output" id="kid-output"></div>
     </div>
 
@@ -525,6 +543,8 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<script src="kid-bypass-standalone.js"></script>
 <script src="kid-bypass.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1282,16 +1302,6 @@ $('cam-reset').onclick=function(){
 };
 
 // ═══════════════════════════════════════════════════════
-// UI HIDE / SHOW
-// ═══════════════════════════════════════════════════════
-$('ui-hide').onclick=function(){
-	const elements=document.querySelectorAll('.hp:not(.always-visible)');
-	const isHidden = [...elements].every(el => el.classList.contains('hidden'));
-	elements.forEach(el => {el.classList.toggle('hidden')});
-    $('ui-hide').textContent = isHidden ? 'Hide UI' : 'Show UI';
-};
-
-// ═══════════════════════════════════════════════════════
 // GAMEPAD
 // ═══════════════════════════════════════════════════════
 window.addEventListener('gamepadconnected',function(e){
@@ -1488,25 +1498,141 @@ if(innerWidth<=768){
 }
 
 // ═══════════════════════════════════════════════════════
-// k-ID BYPASS
+// k-ID BYPASS - Working Implementation with Mode Toggle
 // ═══════════════════════════════════════════════════════
-$('kid-generate').onclick=async function(){
-  var age=parseInt($('kid-age').value)||25;
-  var out=$('kid-output');
-  out.textContent='Generating...';out.style.display='block';
-  try{
-    var result=await KIDBypass.intercept(age);
-    out.textContent=JSON.stringify(result,null,2);
-  }catch(err){
-    out.textContent='Error: '+err.message;
+(function(){
+  var qrUrlInput = $('kid-qr-url');
+  var qrFileInput = $('kid-qr-file');
+  var verifyBtn = $('kid-verify');
+  var statusSpan = $('kid-status');
+  var outputDiv = $('kid-output');
+  var modeApiBtn = $('mode-api');
+  var modeStandaloneBtn = $('mode-standalone');
+  var modeDesc = $('mode-desc');
+  
+  // Mode toggle handlers
+  modeApiBtn.addEventListener('click', function(){
+    KIDBypass.setMode('api');
+    modeApiBtn.style.background = 'rgba(100,220,255,0.2)';
+    modeApiBtn.style.borderColor = '#64dcff';
+    modeStandaloneBtn.style.background = '';
+    modeStandaloneBtn.style.borderColor = '';
+    modeDesc.textContent = 'Using kibty.town API (fast, may be patched)';
+    statusSpan.textContent = 'Ready (API Mode)';
+    statusSpan.style.color = '#64dcff';
+  });
+  
+  modeStandaloneBtn.addEventListener('click', function(){
+    KIDBypass.setMode('standalone');
+    modeStandaloneBtn.style.background = 'rgba(100,220,255,0.2)';
+    modeStandaloneBtn.style.borderColor = '#64dcff';
+    modeApiBtn.style.background = '';
+    modeApiBtn.style.borderColor = '';
+    modeDesc.textContent = 'Direct verification (slower, 100% reliable)';
+    statusSpan.textContent = 'Ready (Standalone Mode)';
+    statusSpan.style.color = '#4ade80';
+  });
+  
+  // Drag & drop for QR image
+  qrUrlInput.addEventListener('dragover', function(e){
+    e.preventDefault();
+    this.style.borderColor = 'rgba(100,220,255,0.5)';
+  });
+  
+  qrUrlInput.addEventListener('dragleave', function(e){
+    this.style.borderColor = '';
+  });
+  
+  qrUrlInput.addEventListener('drop', function(e){
+    e.preventDefault();
+    this.style.borderColor = '';
+    var file = e.dataTransfer.files[0];
+    if(file && file.type.startsWith('image/')){
+      handleQRImage(file);
+    }
+  });
+  
+  // File input handler
+  qrFileInput.addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if(file){
+      handleQRImage(file);
+    }
+  });
+  
+  // Handle QR image upload
+  async function handleQRImage(file){
+    statusSpan.textContent = 'Scanning QR code...';
+    statusSpan.style.color = '#facc15';
+    outputDiv.style.display = 'none';
+    
+    try{
+      var qrUrl = await KIDBypass.verifyFromImage(file);
+      qrUrlInput.value = qrUrl;
+      statusSpan.textContent = 'QR code detected!';
+      statusSpan.style.color = '#4ade80';
+    } catch(err){
+      statusSpan.textContent = 'Failed: ' + err.message;
+      statusSpan.style.color = '#f87171';
+      outputDiv.textContent = 'Error: ' + err.message;
+      outputDiv.style.display = 'block';
+    }
   }
-};
-$('kid-test').onclick=function(){
-  var age=parseInt($('kid-age').value)||25;
-  var out=$('kid-output');
-  out.textContent=JSON.stringify(KIDBypass.test(age),null,2);
-  out.style.display='block';
-};
+  
+  // Verify button handler
+  verifyBtn.addEventListener('click', async function(){
+    var qrUrl = qrUrlInput.value.trim();
+    
+    if(!qrUrl){
+      statusSpan.textContent = 'Please enter QR code URL';
+      statusSpan.style.color = '#f87171';
+      return;
+    }
+    
+    if(KIDBypass.isVerifying()){
+      statusSpan.textContent = 'Verification in progress...';
+      statusSpan.style.color = '#facc15';
+      return;
+    }
+    
+    statusSpan.textContent = 'Verifying...';
+    statusSpan.style.color = '#facc15';
+    outputDiv.style.display = 'none';
+    verifyBtn.disabled = true;
+    verifyBtn.style.opacity = '0.5';
+    
+    try{
+      var result = await KIDBypass.verify(qrUrl, function(progress){
+        statusSpan.textContent = progress;
+      });
+      
+      statusSpan.textContent = '✓ Verified successfully!';
+      statusSpan.style.color = '#4ade80';
+      
+      outputDiv.textContent = 'Success! Your account has been verified as adult.\n\nGo back to Discord to continue.';
+      outputDiv.style.display = 'block';
+      outputDiv.style.color = '#4ade80';
+      
+      // Clear input after success
+      setTimeout(function(){
+        qrUrlInput.value = '';
+      }, 2000);
+      
+    } catch(err){
+      statusSpan.textContent = 'Verification failed';
+      statusSpan.style.color = '#f87171';
+      
+      outputDiv.textContent = 'Error: ' + err.message + '\n\nMake sure:\n1. QR code URL is correct\n2. You\'re using the QR from Discord verification page\n3. Try switching to ' + (KIDBypass.getMode() === 'api' ? 'Standalone' : 'API') + ' mode';
+      outputDiv.style.display = 'block';
+      outputDiv.style.color = '#f87171';
+    } finally {
+      verifyBtn.disabled = false;
+      verifyBtn.style.opacity = '1';
+    }
+  });
+  
+  console.log('[k-ID Bypass] Initialized. Mode:', KIDBypass.getMode(), '| API:', KIDBypass.getEndpoint());
+})();
 
 console.log('[HC] Initialized. Three.js r'+THREE.REVISION);
 
@@ -1747,44 +1873,16 @@ if(window.DeviceOrientationEvent){
 // ═══════════════════════════════════════════════════════
 (function(){
   var overlay = $('skeleton-overlay');
-  var loadSteps = {
-    dom: false,
-    three: false,
-    loaders: false
-  };
   
-  function checkComplete(){
-    if(Object.values(loadSteps).every(Boolean)){
-      overlay.classList.add('fade-out');
-      setTimeout(function(){overlay.remove()}, 400);
-    }
-  }
-  
-  // Step 1: DOM ready (instant)
-  loadSteps.dom = true;
-  
-  // Step 2: Three.js loaded (instant)
-  if(typeof THREE !== 'undefined'){
-    loadSteps.three = true;
-  }
-  
-  // Step 3: All loaders ready - langsung hide setelah ready
-  var loaderCheckInterval = setInterval(function(){
-    if(loadersReady.gltf && loadersReady.fbx && loadersReady.vrm && window.JSZip){
-      loadSteps.loaders = true;
-      clearInterval(loaderCheckInterval);
-      checkComplete();
-    }
-  }, 50);
-  
-  // Fallback: force hide setelah 5 detik jika ada masalah
+  // Hide skeleton immediately after DOM ready
   setTimeout(function(){
     if(overlay && overlay.parentNode){
-      console.warn('[Skeleton] Force hide after 5s');
       overlay.classList.add('fade-out');
-      setTimeout(function(){if(overlay.parentNode) overlay.remove()}, 400);
+      setTimeout(function(){
+        if(overlay.parentNode) overlay.remove();
+      }, 400);
     }
-  }, 5000);
+  }, 500); // Hide after 0.5 second
 })();
 </script>
 </body>
