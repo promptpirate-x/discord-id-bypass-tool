@@ -1022,6 +1022,12 @@ function buildMorphTesterRow(container,morph,idx,optVal){
     var v=parseInt(this.value)/100;
     morph.mesh.morphTargetInfluences[morph.idx]=v;
     val.textContent=Math.round(v*100)+'%';
+    
+    // Auto-update mRange if this is the active mouth morph
+    if(A.morphMesh===morph.mesh&&A.morphIdx===morph.idx&&v>0){
+      CFG.mRange=v;
+      $('mr-v').textContent=Math.round(CFG.mRange*100)+'%';
+    }
   };
   // Reset on release (unless it's the active mouth morph)
   slider.onchange=function(){
@@ -1029,6 +1035,15 @@ function buildMorphTesterRow(container,morph,idx,optVal){
       morph.mesh.morphTargetInfluences[morph.idx]=0;
       val.textContent='0%';
       this.value='0';
+    } else {
+      // Keep the mRange value when releasing slider on active morph
+      var v=parseInt(this.value)/100;
+      if(v>0){
+        CFG.mRange=v;
+        $('mr-v').textContent=Math.round(CFG.mRange*100)+'%';
+      }
+      // Reset preview to 0 so mouth only opens when Space is pressed
+      morph.mesh.morphTargetInfluences[morph.idx]=0;
     }
   };
 
@@ -1042,21 +1057,21 @@ function buildMorphTesterRow(container,morph,idx,optVal){
     A.morphMesh=morph.mesh;A.morphIdx=morph.idx;
     $('morph-sel').value=optVal;
 
-    // Auto-set Range to match current slider preview value (if > 100%)
+    // Auto-set Range to match current slider preview value (if > 0%)
     var sliderVal=parseInt(slider.value)/100;
-    if(sliderVal>1){
+    if(sliderVal>0){
       CFG.mRange=sliderVal;
       $('mr-v').textContent=Math.round(CFG.mRange*100)+'%';
     }
 
-    // Reset all other morph previews
+    // Reset all morph previews (including the active one)
     for(var j=0;j<allMorphs.length;j++){
-      if(j!==idx) allMorphs[j].mesh.morphTargetInfluences[allMorphs[j].idx]=0;
+      allMorphs[j].mesh.morphTargetInfluences[allMorphs[j].idx]=0;
     }
     var allSliders=container.querySelectorAll('.morph-slider');
-    allSliders.forEach(function(s,si){if(si!==idx){s.value='0'}});
+    allSliders.forEach(function(s){s.value='0'});
     var allVals=container.querySelectorAll('.morph-tester-val');
-    allVals.forEach(function(v,vi){if(vi!==idx){v.textContent='0%'}});
+    allVals.forEach(function(v){v.textContent='0%'});
   }
 
   // Both name click and button click assign
